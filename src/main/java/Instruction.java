@@ -11,21 +11,7 @@ public class Instruction {
         this.inm = inm;
     }
 
-    //
-    // Juego de instrucciones
-    public static final int
-            nop = -1,
-            trap = 0,
-            lw = 1,
-            sw = 2,
-            add = 3,
-            sub = 4,
-            addi = 5,
-            subbi = 6,
-            mult = 7;
 
-    // Tipo de instrucciones
-    public static final int tipoR = 0, tipoI = 1;
 
 
     // Códigos para las UF
