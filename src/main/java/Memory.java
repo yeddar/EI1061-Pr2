@@ -16,23 +16,24 @@ public class Memory {
 
     public static Register [] registers = new Register[NUM_REG];
     public static Instruction[] instructionMem = new Instruction[NUM_INS];
-    public static int[] dataMem = new int[NUM_DAT];
+    public static int[] dataMem;
     public static Instruction[] instructionQueue = new Instruction[MAX_INS_COLA_INST];
 
 
-    public void initializeDataMem() {
-        for(int i=1; i<=NUM_DAT; i++)
+    public static void initializeDataMem(int num_dat){
+	dataMem ) new int[num_dat];
+        for(int i=1; i<=num_dat; i++)
             dataMem[i-1] = i;
     }
 
-    public void initializeRegisters() {
-        for(int i=1; i<=NUM_REG; i++) {
+    public static void initializeRegisters(int num_reg) {
+        for(int i=1; i<=num_reg; i++) {
             registers[i - 1].data = i;
             registers[i - 1].validData = 1;
         }
     }
 
-    public void initializateInstructionMem(String fileName) {
+    public static void initializeInstructionMem(String fileName) {
         try {
             chargeIntructions(fileName);
         } catch (Exception ex) {
