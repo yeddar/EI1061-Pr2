@@ -13,7 +13,15 @@ public class ROB {
         this.stage = stage;
     }
 
-    public int getValidLine() {
+    public ROB() {
+        this.validLine = -1;
+        this.destReg = -1;
+        this.res = -1;
+        this.vaildRes = -1;
+        this.stage = -1;
+	}
+
+	public int getValidLine() {
         return validLine;
     }
 

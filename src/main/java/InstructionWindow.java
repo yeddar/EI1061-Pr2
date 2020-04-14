@@ -19,7 +19,18 @@ public class InstructionWindow {
         this.robLine = robLine;
     }
 
-    public int getValidLine() {
+    public InstructionWindow() {
+    	this.validLine = -1;
+        this.op = -1;
+        this.type = -1;
+        this.opA = -1;
+        this.vOpA = -1;
+        this.opB = -1;
+        this.vOpB = -1;
+        this.robLine = -1;
+	}
+
+	public int getValidLine() {
         return validLine;
     }
 
