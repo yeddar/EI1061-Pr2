@@ -21,7 +21,7 @@ public class Memory {
 
 
     public static void initializeDataMem(int num_dat){
-	dataMem ) new int[num_dat];
+	dataMem = new int[num_dat];
         for(int i=1; i<=num_dat; i++)
             dataMem[i-1] = i;
     }
