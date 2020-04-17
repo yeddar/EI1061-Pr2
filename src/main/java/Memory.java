@@ -14,34 +14,44 @@ public class Memory {
     // Juego de instrucciones
     public static final int nop = -1, trap = 0, lw = 1, sw = 2, add = 3, sub = 4, addi = 5, subbi = 6, mult = 7;
 
-    public static Register [] registers = new Register[NUM_REG];
+    public static Register [] registers;
     public static Instruction[] instructionMem = new Instruction[NUM_INS];
     public static int[] dataMem;
-    public static Instruction[] instructionQueue = new Instruction[MAX_INS_COLA_INST];
+    public static Instruction[] instructionQueue;
 
 
     public static void initializeDataMem(int num_dat){
-	dataMem = new int[num_dat];
+    	dataMem = new int[num_dat];
         for(int i=1; i<=num_dat; i++)
             dataMem[i-1] = i;
     }
 
     public static void initializeRegisters(int num_reg) {
+    	registers = new Register[num_reg];
         for(int i=1; i<=num_reg; i++) {
             registers[i - 1].data = i;
             registers[i - 1].validData = 1;
         }
     }
 
-    public static void initializeInstructionMem(String fileName) {
-        try {
-            chargeIntructions(fileName);
+    public static int initializeInstructionMem(String fileName) {
+        int numOfInstructions = 0;
+    	try {
+            numOfInstructions = chargeIntructions(fileName);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    	return numOfInstructions;
     }
 
-    private static void chargeIntructions(String fileName) throws IOException {
+	public static void initializeInstructionsQueue(int queueLength) {
+		instructionQueue = new Instruction[queueLength];
+	}
+
+    
+    //TODO: Modificar la función para las instrucciones de esta práctica.
+    
+    private static int chargeIntructions(String fileName) throws IOException {
         String instruction;
         String[] aux;
         int nInstruction = 0;
@@ -108,14 +118,14 @@ public class Memory {
                     instructionMem[nInstruction++] = new Instruction(nop, typeR, rc, ra, rb, inm);
                     //System.out.println("NOP");
 
-
             }
         }
         // Ciclos extra
+        int devolver = nInstruction;
         for(int i = 0; i < 4; i++)
             instructionMem[nInstruction++] = new Instruction(nop, typeR, rc, ra, rb, inm);
 
-
+        return devolver;
     }
 
 
