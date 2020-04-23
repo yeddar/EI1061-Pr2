@@ -11,33 +11,27 @@ public class Instruction {
         this.inm = inm;
     }
 
+    public int getOperationCode() {
+        return operationCode;
+    }
 
+    public int getType() {
+        return type;
+    }
 
+    public int getRc() {
+        return rc;
+    }
 
-    // Códigos para las UF
-    public static final int
-            TOTAL_UF = 4,
-            UF_SR_1 = 0,
-            UF_SR_2 = 1,
-            UF_CA = 2,
-            UF_MULT = 3;
+    public int getRa() {
+        return ra;
+    }
 
+    public int getRb() {
+        return rb;
+    }
 
-    // Ciclos de ejecución de UF
-    public static final int
-            TOT_CICLOS_CA = 2, // Carga y almacentamiento
-            TOT_CICLOS_SR = 1, // Suma y resta
-            TOT_CICLOS_MULT = 5; //Mult
-
-    // Estapas en ROB
-    public static final int
-            ID = 0,
-            ISS = 1,
-            EX = 2,
-            F0 = 3,
-            F1 = 4;
-
-
-
-
+    public int getInm() {
+        return inm;
+    }
 }

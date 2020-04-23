@@ -1,12 +1,14 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+
 
 public class Memory {
 
-    // Capacidad de las estructuras de almacenamiento
-    public static final int NUM_REG = 16, NUM_DAT = 32, NUM_INS = 32, MAX_INS_COLA_INST = 6,
-            MAX_INS_VI = 2, MAX_INS_ROB = 6;
 
     // Tipo de instrucciones
     public static final int typeR = 0, typeI = 1;
@@ -15,9 +17,9 @@ public class Memory {
     public static final int nop = -1, trap = 0, lw = 1, sw = 2, add = 3, sub = 4, addi = 5, subbi = 6, mult = 7;
 
     public static Register [] registers;
-    public static Instruction[] instructionMem = new Instruction[NUM_INS];
+    public static Instruction[] instructionMem;
     public static int[] dataMem;
-    public static Instruction[] instructionQueue;
+    public static Queue<Instruction> instructionQueue;
 
 
     public static void initializeDataMem(int num_dat){
@@ -34,7 +36,7 @@ public class Memory {
         }
     }
 
-    public static int initializeInstructionMem(String fileName) {
+    public static int initializeInstructionMem(int size, String fileName) {
         int numOfInstructions = 0;
     	try {
             numOfInstructions = chargeIntructions(fileName);
@@ -44,13 +46,12 @@ public class Memory {
     	return numOfInstructions;
     }
 
-	public static void initializeInstructionsQueue(int queueLength) {
-		instructionQueue = new Instruction[queueLength];
+	public static void initializeInstructionsQueue() {
+		instructionQueue = new LinkedList<>();
 	}
 
     
     //TODO: Modificar la función para las instrucciones de esta práctica.
-    
     private static int chargeIntructions(String fileName) throws IOException {
         String instruction;
         String[] aux;

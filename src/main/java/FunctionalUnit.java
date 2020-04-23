@@ -18,8 +18,11 @@ public class FunctionalUnit {
         this.opB = opB;
     }
 	
-	public FunctionalUnit(){}
-	
+	public FunctionalUnit(int op){
+    	this.op = op;
+	}
+
+	// Creo que todos estos métodos se pueden sustituir por el constuctor de arriba
 	public FunctionalUnit addFU(){
 		this.op = ADD_OP;
 		return this;

@@ -1,9 +1,9 @@
 public class ROB {
-    int validLine;
-    int destReg;
-    int res;
-    int vaildRes;
-    int stage;
+    private int validLine;
+    private int destReg;
+    private int res;
+    private int vaildRes;
+    private int stage;
 
     public ROB(int validLine, int destReg, int res, int vaildRes, int stage) {
         this.validLine = validLine;
