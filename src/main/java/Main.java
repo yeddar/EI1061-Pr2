@@ -100,20 +100,68 @@ public class Main {
 
 	}
 
-	private static void etapa_ID(InstructionWindow[] instructionWindow, ROB[] rob) {
-		// TODO Auto-generated method stub
+	private static void etapa_ID(InstructionWindow[] iw, ROB[] rob) {
+		// TODO Hay que crear una función para la búsqueda de un operando en ROB y evitar la repetición de código.
 		// Get instructions from instructions queue.
 
 		if ( (inst_instructionWindow == 0) && (Memory.instructionQueue.size() > 0) ) {
-			Instruction ins = Memory.instructionQueue.poll();
-			// Antes de cargar instrucción, buscar en banco de registros validez y ROB
-			// Si registro tiene contenido válido
-			if ( Memory.registers[ins.getRa()].validData == 1 ) {
-				instructionWindow[0].vOpA = 1;
-			}
-			//TODO Lo he dejado por aquí
-			//instructionWindow[0].chargeInstruction(1, ins.getOperationCode(), ins.getType(), ins.getRa(), 1, ins.getRb(), 1, 0);
+			int rPointer, qPointer = 0;
+			while ( (Memory.instructionQueue.size() > 0) && qPointer < MAX_INST) {
+				Instruction ins = Memory.instructionQueue.poll();
+				// Antes de cargar instrucción, buscar en banco de registros validez y ROB
+				// Si registro tiene contenido válido
+				int id_ra = ins.getRa(); // Register identifier
+				int id_rb = ins.getRb();
+				if (Memory.registers[id_ra].validData == 1) {
+					iw[qPointer].opA = Memory.registers[id_ra].data;
+					iw[qPointer].vOpA = 1;
+				} else {
+					// Búsqueda en ROB operando A
+					rPointer = inst_rob - 1;
+					if (instructionRobFirst != instructionRobLast) { // is not empty
+						while (rob[rPointer].validLine == 1) {
+							if (rob[rPointer].destReg == id_ra) { // Dependency
+								if (rob[rPointer].vaildRes == 1) {
+									iw[qPointer].opA = rob[rPointer].res;
+									iw[qPointer].vOpA = 1;
+								} else { // Registro a la espera de ser actualizado
+									// Guardamos el índice de línea ROB que contiene operando
+									iw[qPointer].opA = rPointer;
+									iw[qPointer].vOpA = 0;
+								}
 
+							}
+						}
+					}
+				}
+				// Operando B. Tener en cuenta que puede ser dato inmediato
+				if (ins.getType() == Memory.typeI) { //Type I instruction
+					iw[qPointer].opB = ins.getInm();
+					iw[qPointer].vOpB = 1;
+				} else if (Memory.registers[id_rb].validData == 1) {
+					iw[qPointer].opB = ins.getRb();
+					iw[qPointer].vOpB = 1;
+				} else { // Buscar en ROB
+					rPointer = inst_rob - 1;
+					if (instructionRobFirst != instructionRobLast) { // is not empty
+						while (rob[rPointer].validLine == 1) {
+							if (rob[rPointer].destReg == id_rb) { // Dependency
+								if (rob[rPointer].vaildRes == 1) {
+									iw[qPointer].opB = rob[rPointer].res;
+									iw[qPointer].vOpB = 1;
+								} else { // Registro a la espera de ser actualizado
+									// Guardamos el índice de línea ROB que contiene operando
+									iw[qPointer].opB = rPointer;
+									iw[qPointer].vOpB = 0;
+								}
+
+							}
+						}
+					}
+
+				}
+				qPointer++;
+			} // Fin while
 		}
 
 	}

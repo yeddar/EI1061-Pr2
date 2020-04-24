@@ -30,14 +30,4 @@ public class InstructionWindow {
         this.robLine = -1;
 	}
 
-	public void chargeInstruction(int validLine, int op, int type, int opA, int vOpA, int opB, int vOpB, int robLine){
-        this.validLine = validLine;
-        this.op = op;
-        this.type = type;
-        this.opA = opA;
-        this.vOpA = vOpA;
-        this.opB = vOpB;
-        this.robLine = robLine;
-    }
-
 }
