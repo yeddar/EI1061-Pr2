@@ -24,19 +24,13 @@ public class Main {
 	public static final int
 			ID = 0, ISS = 1, EX = 2, F0 = 3, F1 = 4;
 
+	// ROB indexes
+	static int inst_rob = 0; // Num lineas válidas. TODO: Tengo mis dudas sobre si hace falta inst_rob
+	static int firstIndexRob = -1;
+	static int lastIndexRob = 0;
 
-	static int inst_instructionQueue = 0, inst_instructionWindow = 0, inst_rob = 0; // Número actual de instrucciones en su correspondiente estructura de datos
-	// TODO Los buffer circulares se pueden implementar con una cola FIFO en Java
-	static int instructionQueueFirst = -1; // Posición donde empiezan las instrucciones de la cola de instrucciones. -1 = Cola vacía
-	static int instructionQueueLast = 0; // SIGUIENTE posición a la última instrucción de la cola de instrucciones. Si First == Last: La cola está llena.
-	
-	static int instructionRobFirst = -1; // Posición donde empiezan las instrucciones del ROB. -1 = Cola vacía
-	static int instructionRobLast = 0; // SIGUIENTE posición a la última instrucción del ROB. Si First == Last: La cola está llena.
-	
+	static int inst_instructionWindow = 0; // Número actual de instrucciones en su correspondiente estructura de datos
 	static int numOfInstructions = -1;
-
-	// Related instructions queue
-
 
 	static int programCounter = 0; //TODO: Es el contador del programa. Pero creo que conforme lo ibamos a hacer nosotros no hace falta
 
@@ -49,7 +43,7 @@ public class Main {
 		numOfInstructions = Memory.initializeInstructionMem(NUM_INS, FILE_NAME); //TODO: Hacer que la función devuelva el número de instrucciones
 
 		// Initialization of instruction queue
-		Memory.initializeInstructionsQueue(); //TODO: Crear función en la clase Memory
+		Memory.initializeInstructionsQueue();
 
 
 		//Inicialización de las Unidades Funcionales
@@ -77,7 +71,7 @@ public class Main {
 		    // WB, RX, ISS, ID, IF
 			//TODO: Creo que habría que cambiar el orden de ejecución de las etapas para que no se sobreescriban los registros
 		    etapa_IF(); // etapa_IF();
-		    etapa_ID(instructionWindow, rob);
+		    etapa_ID(instructionWindow, rob, firstIndexRob);
 		    etapa_ISS(functionUnits, rob);
 		    etapa_EX(functionUnits, rob);
 		    etapa_WB(rob, instructionWindow);
@@ -100,13 +94,46 @@ public class Main {
 		}
 
 	}
+	// Busca operando en ROB.
+	// Devuelve:
+	// -1 si no se encuentra el operando
+	// Puntero de linea si encuentra registro y línea es válida
+	private static int busquedaROB(ROB [] rob, int robPointer, int operand) {
+		for ( int i = 0; i < ROB_LENGTH; i++ ) {
+			if ( (rob[robPointer].destReg == operand) && (rob[robPointer].validLine == 1) ) { // Dependency
+				return robPointer;
+			}
+			robPointer = (robPointer + 1) % ROB_LENGTH;
+		}
+		return -1;
+	}
 
-	private static void etapa_ID(InstructionWindow[] iw, ROB[] rob) {
+	// Añade línea en ROB.
+	// Devuelve:
+	// -1 Si buffer lleno
+	// 1 Si se ha añadido/modificado línea
+	private static int addLineROB(ROB [] rob, int validLine, int destReg, int res, int validRes, int stage) {
+		if (firstIndexRob == lastIndexRob) // Buffer lleno
+			return -1;
+
+		if (firstIndexRob == -1) { // Buffer vacío
+			rob[0].set(validLine, destReg,res,validRes,stage);
+			firstIndexRob = 0;
+		} else {
+			rob[lastIndexRob].set(validLine,destReg,res,validRes,stage);
+		}
+		lastIndexRob = (lastIndexRob + 1) % ROB_LENGTH;
+		inst_rob++; // Actualiza el número de elementos en ROB
+		return 1;
+	}
+
+
+	private static void etapa_ID(InstructionWindow[] iw, ROB[] rob, int robPointer) {
 		// TODO Hay que crear una función para la búsqueda de un operando en ROB y evitar la repetición de código.
 		// Get instructions from instructions queue.
 
 		if ( inst_instructionWindow == 0 ) {
-			int rPointer, wPointer = 0;
+			int wPointer = 0;
 			while ( (Memory.instructionQueue.size() > 0) && wPointer < MAX_INST) {
 				Instruction ins = Memory.instructionQueue.poll();
 				// Antes de cargar instrucción, buscar en banco de registros validez y ROB
@@ -122,17 +149,14 @@ public class Main {
 					iw[wPointer].vOpA = 1;
 				} else { // Si no contenido válido
 					// Búsqueda en ROB operando A
-					for (rPointer = ROB_LENGTH - 1; (rPointer >= 0) && (rob[rPointer].validLine == 1); rPointer-- ) {
-						if (rob[rPointer].destReg == id_ra) { // Dependency
-							if (rob[rPointer].vaildRes == 1) {
-								iw[wPointer].opA = rob[rPointer].res;
-								iw[wPointer].vOpA = 1;
-							} else { // Registro a la espera de ser actualizado por otra instrucción
-								// Guardamos el índice de línea ROB que contiene operando
-								iw[wPointer].opA = rPointer;
-								iw[wPointer].vOpA = 0;
-							}
-
+					int robLine = busquedaROB(rob, robPointer, id_ra);
+					if (robLine != -1) { // Operando válido
+						if (rob[robLine].vaildRes == 1) {
+							iw[wPointer].opA = rob[robLine].res;
+							iw[wPointer].vOpA = 1;
+						} else { // Operando no válido. Guarda referencia línea ROB
+							iw[wPointer].opA = robLine;
+							iw[wPointer].vOpA = 0;
 						}
 					}
 				}
@@ -146,29 +170,22 @@ public class Main {
 					iw[wPointer].opB = ins.getRb();
 					iw[wPointer].vOpB = 1;
 				} else { // Buscar en ROB
-					for (rPointer = ROB_LENGTH - 1; (rPointer >= 0) && (rob[rPointer].validLine == 1); rPointer-- ) {
-						if (rob[rPointer].destReg == id_rb) { // Dependency
-							if (rob[rPointer].vaildRes == 1) {
-								iw[wPointer].opB = rob[rPointer].res;
-								iw[wPointer].vOpB = 1;
-							} else { // Registro a la espera de ser actualizado
-								// Guardamos el índice de línea ROB que contiene operando
-								iw[wPointer].opB = rPointer;
-								iw[wPointer].vOpB = 0;
-							}
-
+					// Búsqueda en ROB operando B
+					int robLine = busquedaROB(rob, robPointer, id_rb);
+					if (robLine != -1) { // Operando válido
+						if (rob[robLine].vaildRes == 1) {
+							iw[wPointer].opB = rob[robLine].res;
+							iw[wPointer].vOpB = 1;
+						} else {
+							iw[wPointer].opB = robLine;
+							iw[wPointer].vOpB = 0;
 						}
 					}
 				}
 
 				// Parte 3. Añadir intrucción en ROB
 				// Add instruction into ROB
-				for (rPointer = ROB_LENGTH - 1; (rPointer >= 0) && (rob[rPointer].validLine != 0); rPointer-- ) {
-					if (rob[rPointer].validLine == 0) {
-						rob[rPointer].set(1, id_rc, 0, 0, ID);
-					}
-				}
-
+				addLineROB(rob, 1, id_rc, 0, 0, ID);
 				wPointer++; // Incrementar puntero de ventana
 			}// Fin while
 			// Actualizar tamaño ventana intrucciones
@@ -177,7 +194,7 @@ public class Main {
 	}
 
 
-
+	// Diego
 	private static void etapa_ISS(FunctionalUnit[] functionUnits, ROB[] rob) {
 		// TODO Auto-generated method stub
 		
@@ -195,12 +212,12 @@ public class Main {
 	
 	
 	//SHOWERS (Mostradores, no duchas xDD)
-
+	// Diego
 	private static void show_instructionQueue() {
 		// TODO Auto-generated method stub
 		
 	}
-
+	// Diego
 	private static void show_instructionWindow(InstructionWindow[] instructionWindow) {
 		// TODO Auto-generated method stub
 		

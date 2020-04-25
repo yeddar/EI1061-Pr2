@@ -20,6 +20,7 @@ public class Memory {
     public static Instruction[] instructionMem;
     public static int[] dataMem;
     public static Queue<Instruction> instructionQueue;
+    public static Queue<ROB> rob;
 
 
     public static void initializeDataMem(int num_dat){
@@ -49,6 +50,10 @@ public class Memory {
 	public static void initializeInstructionsQueue() {
 		instructionQueue = new LinkedList<>();
 	}
+
+    public static void initializeRob() {
+        rob = new LinkedList<>();
+    }
 
     
     //TODO: Modificar la función para las instrucciones de esta práctica.
@@ -121,6 +126,7 @@ public class Memory {
 
             }
         }
+        // TODO Quitarlo
         // Ciclos extra
         int devolver = nInstruction;
         for(int i = 0; i < 4; i++)
