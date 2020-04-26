@@ -9,7 +9,7 @@ public class Main {
 	final static int ROB_LENGTH = 6;
 
 	// Códigos para las UF
-	public static final int TOTAL_UF = 4, UF_SUM = 0, UF_RES = 1, UF_CA = 2, UF_MULT = 3;
+	public static final int TOTAL_UF = 4, UF_SUM1 = 0, UF_SUM2 = 1, UF_CA = 2, UF_MULT = 3;
 
 	// Número máximo de intrucciones que se pueden procesar en cada etapa por ciclo
 	public static final int MAX_INST = 2;
@@ -48,10 +48,10 @@ public class Main {
 
 		//Inicialización de las Unidades Funcionales
 		FunctionalUnit[] functionUnits = new FunctionalUnit[TOTAL_UF];
-		functionUnits[UF_SUM] = new FunctionalUnit(UF_SUM);
-		functionUnits[UF_RES] = new FunctionalUnit(UF_RES);
-		functionUnits[UF_CA] = new FunctionalUnit(UF_CA);
-		functionUnits[UF_MULT] = new FunctionalUnit(UF_MULT);
+		functionUnits[UF_SUM1] = new FunctionalUnit();
+		functionUnits[UF_SUM2] = new FunctionalUnit();
+		functionUnits[UF_CA] = new FunctionalUnit();
+		functionUnits[UF_MULT] = new FunctionalUnit().multFU();
 		
 		//Inicialización de las ventanas de instrucción
 		InstructionWindow[] instructionWindow = new InstructionWindow[WINDOW_SIZE];
@@ -72,7 +72,7 @@ public class Main {
 			//TODO: Creo que habría que cambiar el orden de ejecución de las etapas para que no se sobreescriban los registros
 		    etapa_IF(); // etapa_IF();
 		    etapa_ID(instructionWindow, rob, firstIndexRob);
-		    etapa_ISS(functionUnits, rob);
+		    etapa_ISS(instructionWindow, functionUnits, rob);
 		    etapa_EX(functionUnits, rob);
 		    etapa_WB(rob, instructionWindow);
 		    //Mostrar el contenido de las distintas estructuras para ver como evoluciona la simulación
@@ -94,6 +94,7 @@ public class Main {
 		}
 
 	}
+	
 	// Busca operando en ROB.
 	// Devuelve:
 	// -1 si no se encuentra el operando
@@ -195,18 +196,108 @@ public class Main {
 
 
 	// Diego
-	private static void etapa_ISS(FunctionalUnit[] functionUnits, ROB[] rob) {
+	private static void etapa_ISS(InstructionWindow[] iw, FunctionalUnit[] functionUnits, ROB[] rob) {
 		// TODO Auto-generated method stub
-		
+		int i=0;
+		boolean seguir = true;
+		while (i<2 && seguir) {
+			if(iw[i].validLine == 1) {
+				if ((iw[i].op == Memory.add) || (iw[i].op == Memory.sub) || (iw[i].op == Memory.addi) || (iw[i].op == Memory.subi)) {
+					if (iw[i].vOpA == 1 && iw[i].vOpB == 1) {
+						if (functionUnits[UF_SUM1].inUse == 0) {
+							if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM1].addFU();
+							else functionUnits[UF_SUM1].subFU();
+							functionUnits[UF_SUM1].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
+							lastIndexRob = (lastIndexRob+1)*ROB_LENGTH;
+							iw[i].validLine = 0;
+							i++;
+						}
+						else 
+							if (functionUnits[UF_SUM2].inUse == 0) {
+								if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM2].addFU();
+								else functionUnits[UF_SUM2].subFU();
+								functionUnits[UF_SUM2].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
+								lastIndexRob = (lastIndexRob+1)*ROB_LENGTH;
+								iw[i].validLine = 0;
+								i++;
+							}
+						
+					}
+				}
+				else
+					if ((iw[i].op == Memory.lw) || (iw[i].op == Memory.sw) ) {
+						if (iw[i].vOpA == 1 && (iw[i].op == Memory.lw || iw[i].vOpB == 1)) {
+							if (functionUnits[UF_CA].inUse == 0) {
+								if((iw[i].op == Memory.add) || (iw[i].op == Memory.lw)) functionUnits[UF_CA].chargeFU();
+								else functionUnits[UF_CA].storeFU();
+								functionUnits[UF_CA].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
+								lastIndexRob = (lastIndexRob+1)*ROB_LENGTH;
+								iw[i].validLine = 0;
+								i++;
+							}
+						}
+					}
+					else
+						if (iw[i].op == Memory.mult) {
+							if (iw[i].vOpA == 1 && iw[i].vOpB == 1) {
+								if (functionUnits[UF_MULT].inUse == 0) {
+									functionUnits[UF_MULT].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
+									lastIndexRob = (lastIndexRob+1)*ROB_LENGTH;
+									iw[i].validLine = 0;
+									i++;
+								}
+							}
+						}
+				if (i==0) seguir = false;
+			}
+			else {
+				i++;
+			}
+		}
 	}
 
-	private static void etapa_EX(FunctionalUnit[] functionUnits, ROB[] rob) {
-		// TODO Auto-generated method stub
-		
+	private static void etapa_EX(FunctionalUnit[] functionalUnits, ROB[] rob) {
+		for(int i=0; i<TOTAL_UF; i++) {
+			if (functionalUnits[i].inUse == 1) {
+				if(functionalUnits[i].execute()) {
+					rob[functionalUnits[i].robLine].res = functionalUnits[i].res;
+					rob[functionalUnits[i].robLine].stage = F0;
+				}
+			}
+		}
 	}
 
 	private static void etapa_WB(ROB[] rob, InstructionWindow[] instructionWindow) {
-		// TODO Auto-generated method stub
+		int i=0;
+		boolean seguir = true;
+		while (i<2 && seguir) {
+			if (rob[firstIndexRob].stage == F1 && rob[firstIndexRob].validLine == 1) {
+				if (rob[firstIndexRob].destReg == -1) {
+					Memory.registers[rob[firstIndexRob].destReg].data = rob[firstIndexRob].res;
+					Memory.registers[rob[firstIndexRob].destReg].validData = 1;
+				}
+				firstIndexRob = (firstIndexRob + 1) % ROB_LENGTH;
+				i++;
+				numOfInstructions--;
+			}
+			else
+				seguir = false;
+		}
+		
+		/* AQUI ME PIERDO, es el segundo while. Desde aquí.... */
+		/*for (int puntero = 0; puntero<ROB_LENGTH; puntero++) {
+			if (rob[puntero].validLine == F0) {
+				rob[puntero].vaildRes = 1;
+				rob[puntero].stage = F1;
+				for(i=0; i<2; i++) {
+					if(instructionWindow[i].opA == rob[puntero].res && instructionWindow[i].vOpA == 0) {
+						instructionWindow[i].opA = 
+					}
+				}
+			}
+		}
+		/*..... hasta aquí */
+		
 		
 	}
 	
@@ -224,13 +315,21 @@ public class Main {
 	}
 
 	private static void show_ROB(ROB[] rob) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("\tlinea_valida\tDestino\tres\tres_valido\tetapa");
+		for(int i=0; i<ROB_LENGTH; i++) {
+			System.out.print("L"+i+"\t");
+			System.out.print(""+rob[i].validLine+"\t\t");
+			System.out.print(""+rob[i].destReg+"\t");
+			System.out.print(""+rob[i].res+"\t");
+			System.out.print(""+rob[i].vaildRes+"\t");
+			System.out.println(rob[i].stage);
+		}
 	}
 
 	private static void show_DataRegisters() {
-		// TODO Auto-generated method stub
-		
+		for(int i=0; i<Memory.dataMem.length; i++) {
+			System.out.println("Registro "+i+" -> "+Memory.dataMem[i]);
+		}
 	}
 	
 }

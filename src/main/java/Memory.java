@@ -14,7 +14,7 @@ public class Memory {
     public static final int typeR = 0, typeI = 1;
 
     // Juego de instrucciones
-    public static final int nop = -1, trap = 0, lw = 1, sw = 2, add = 3, sub = 4, addi = 5, subbi = 6, mult = 7;
+    public static final int nop = -1, trap = 0, lw = 1, sw = 2, add = 3, sub = 4, addi = 5, subi = 6, mult = 7;
 
     public static Register [] registers;
     public static Instruction[] instructionMem;
@@ -111,7 +111,7 @@ public class Memory {
                     rc = Integer.parseInt(instrucDec[1].substring(1,instrucDec[1].length()-1));
                     ra = Integer.parseInt(instrucDec[2].substring(1,instrucDec[2].length()-1));
                     inm = Integer.parseInt(instrucDec[3].substring(1));
-                    instructionMem[nInstruction++] = new Instruction(subbi, typeI, rc, ra, rb, inm);
+                    instructionMem[nInstruction++] = new Instruction(subi, typeI, rc, ra, rb, inm);
                     break;
                 case "mult":
                     //System.out.println("Es mult");

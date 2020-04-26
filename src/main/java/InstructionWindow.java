@@ -1,5 +1,6 @@
 public class InstructionWindow {
-    int validLine;
+    int inm;
+	int validLine;
     int op;
     int type;
     int opA;
@@ -8,7 +9,7 @@ public class InstructionWindow {
     int vOpB;
     int robLine;
 
-    public InstructionWindow(int validLine, int op, int type, int opA, int vOpA, int opB, int vOpB, int robLine) {
+    public InstructionWindow(int validLine, int op, int type, int opA, int vOpA, int opB, int vOpB, int inm, int robLine) {
         this.validLine = validLine;
         this.op = op;
         this.type = type;
@@ -17,6 +18,7 @@ public class InstructionWindow {
         this.opB = opB;
         this.vOpB = vOpB;
         this.robLine = robLine;
+        this.inm = inm;
     }
 
     public InstructionWindow() {
@@ -28,6 +30,7 @@ public class InstructionWindow {
         this.opB = -1;
         this.vOpB = -1;
         this.robLine = -1;
+        this.inm = 0;
 	}
 
 }
