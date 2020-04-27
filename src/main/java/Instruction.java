@@ -11,6 +11,8 @@ public class Instruction {
         this.inm = inm;
     }
 
+
+
     public int getOperationCode() {
         return operationCode;
     }
@@ -33,5 +35,17 @@ public class Instruction {
 
     public int getInm() {
         return inm;
+    }
+
+    @Override
+    public String toString() {
+        return "Instruction{" +
+                "operationCode=" + operationCode +
+                ", type=" + type +
+                ", rc=" + rc +
+                ", ra=" + ra +
+                ", rb=" + rb +
+                ", inm=" + inm +
+                '}';
     }
 }

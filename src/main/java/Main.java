@@ -203,8 +203,8 @@ public class Main {
 		while (i<2 && seguir) {
 			if(iw[i].validLine == 1) {
 				if ((iw[i].op == Memory.add) || (iw[i].op == Memory.sub) || (iw[i].op == Memory.addi) || (iw[i].op == Memory.subi)) {
-					if (iw[i].vOpA == 1 && iw[i].vOpB == 1) {
-						if (functionUnits[UF_SUM1].inUse == 0) {
+					if (iw[i].vOpA == 1 && iw[i].vOpB == 1) { // Esto sieve para tal...
+						if (functionUnits[UF_SUM1].inUse == 0) { // Esto pascual ..
 							if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM1].addFU();
 							else functionUnits[UF_SUM1].subFU();
 							functionUnits[UF_SUM1].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
@@ -270,20 +270,48 @@ public class Main {
 	private static void etapa_WB(ROB[] rob, InstructionWindow[] instructionWindow) {
 		int i=0;
 		boolean seguir = true;
+		int robPointer = firstIndexRob; // Para que no se modifique el puntero original
 		while (i<2 && seguir) {
-			if (rob[firstIndexRob].stage == F1 && rob[firstIndexRob].validLine == 1) {
-				if (rob[firstIndexRob].destReg == -1) {
-					Memory.registers[rob[firstIndexRob].destReg].data = rob[firstIndexRob].res;
-					Memory.registers[rob[firstIndexRob].destReg].validData = 1;
+			if (rob[robPointer].stage == F1 && rob[robPointer].validLine == 1) {
+				if (rob[robPointer].destReg == -1) {  // TODO: Esto es si la instrucción es sw? En ese caso sería !=
+					Memory.registers[rob[robPointer].destReg].data = rob[robPointer].res;
+					Memory.registers[rob[robPointer].destReg].validData = 1;
+					rob[robPointer].validLine = 0; // Se invalida la línea
+					lastIndexRob++; // A su vez también se 'elimina' del buffer
 				}
-				firstIndexRob = (firstIndexRob + 1) % ROB_LENGTH;
+				//firstIndexRob = (firstIndexRob + 1) % ROB_LENGTH; // TODO: Estás modificando puntero original, solo debe ser modificado cuando se añade un elemento.
+				robPointer = (robPointer + 1) % ROB_LENGTH;
 				i++;
 				numOfInstructions--;
 			}
 			else
 				seguir = false;
 		}
-		
+
+		// TODO: Segundo while transformao en un for
+		robPointer = firstIndexRob; // Para que no se modifique el puntero original
+		for ( i = 0; i < ROB_LENGTH; i++ ) {
+			if ( (rob[robPointer].stage == F0) && (rob[robPointer].validLine == 1) ) { // Linea válida con estado a F0
+				// Pasar a F1 y marcar res válido
+				rob[robPointer].vaildRes = 1;
+				rob[robPointer].stage = F1;
+
+				// Actualización de dependencias en VI
+				for (i=0; i<MAX_INST;i++) { // Revisar las dos líneas de VI
+					// Opernado fuente A
+					if ( (instructionWindow[i].opA == robPointer) && (instructionWindow[i].vOpA == 0) ) { // Si se encuentra dependencia en la ventana de instrucciones
+						// Se actualiza el en la línea de la VI el resultado
+						instructionWindow[i].opA = rob[robPointer].res;
+						instructionWindow[i].vOpA = 1;
+					// Operando fuente B
+					} else if ( (instructionWindow[i].opB == robPointer) && (instructionWindow[i].vOpB == 0) ) {
+						instructionWindow[i].opB = rob[robPointer].res;
+						instructionWindow[i].vOpB = 1;
+					}
+				}
+			}
+			robPointer = (robPointer + 1) % ROB_LENGTH;
+		}
 		/* AQUI ME PIERDO, es el segundo while. Desde aquí.... */
 		/*for (int puntero = 0; puntero<ROB_LENGTH; puntero++) {
 			if (rob[puntero].validLine == F0) {
@@ -306,11 +334,17 @@ public class Main {
 	// Diego
 	private static void show_instructionQueue() {
 		// TODO Auto-generated method stub
+		for (Instruction ins : Memory.instructionQueue) {
+			System.out.println(ins.toString());
+		}
 		
 	}
 	// Diego
 	private static void show_instructionWindow(InstructionWindow[] instructionWindow) {
 		// TODO Auto-generated method stub
+		for (int i = 0; i < WINDOW_SIZE; i++) {
+			System.out.println(instructionWindow[i].toString());
+		}
 		
 	}
 

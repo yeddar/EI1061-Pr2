@@ -33,4 +33,18 @@ public class InstructionWindow {
         this.inm = 0;
 	}
 
+    @Override
+    public String toString() {
+        return "InstructionWindow{" +
+                "inm=" + inm +
+                ", validLine=" + validLine +
+                ", op=" + op +
+                ", type=" + type +
+                ", opA=" + opA +
+                ", vOpA=" + vOpA +
+                ", opB=" + opB +
+                ", vOpB=" + vOpB +
+                ", robLine=" + robLine +
+                '}';
+    }
 }
