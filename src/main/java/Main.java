@@ -3,7 +3,7 @@ public class Main {
 	final static int NUM_REG = 16;
 	final static int NUM_DAT = 32;
 	final static int NUM_INS = 32;
-	final static String FILE_NAME = "instructions.txt";
+	final static String FILE_NAME = "/Users/diegobenitez/IdeaProjects/EI1061/Practica2/src/main/java/instructions.txt";
 	final static int QUEUE_MAX_LENGTH = 6;
 	final static int WINDOW_SIZE = 2;
 	final static int ROB_LENGTH = 6;
@@ -281,6 +281,7 @@ public class Main {
 				}
 				//firstIndexRob = (firstIndexRob + 1) % ROB_LENGTH; // TODO: Estás modificando puntero original, solo debe ser modificado cuando se añade un elemento.
 				robPointer = (robPointer + 1) % ROB_LENGTH;
+				inst_rob--;
 				i++;
 				numOfInstructions--;
 			}
@@ -335,7 +336,8 @@ public class Main {
 	private static void show_instructionQueue() {
 		// TODO Auto-generated method stub
 		for (Instruction ins : Memory.instructionQueue) {
-			System.out.println(ins.toString());
+			if (ins != null)
+				System.out.println(ins.toString());
 		}
 		
 	}

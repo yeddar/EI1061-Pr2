@@ -31,10 +31,10 @@ public class Memory {
 
     public static void initializeRegisters(int num_reg) {
     	registers = new Register[num_reg];
-        for(int i=1; i<=num_reg; i++) {
-            registers[i - 1].data = i;
-            registers[i - 1].validData = 1;
+        for(int i = 1; i <= num_reg; i++) {
+            registers[i - 1] = new Register(i, 1);
         }
+
     }
 
     public static int initializeInstructionMem(int size, String fileName) {
@@ -51,9 +51,6 @@ public class Memory {
 		instructionQueue = new LinkedList<>();
 	}
 
-    public static void initializeRob() {
-        rob = new LinkedList<>();
-    }
 
     
     //TODO: Modificar la función para las instrucciones de esta práctica.
