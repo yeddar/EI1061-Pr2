@@ -66,18 +66,20 @@ public class Main {
 		}
 		
 
-		
+		int i = 0;
 		while ((inst_rob > 0) || (numOfInstructions > 0)) { // un ciclo de simulación ejecuta las 5 etapas.
 			System.out.println("inst_rob = "+inst_rob);
 			System.out.println("numOfInstruction = "+numOfInstructions);
 
 		    // WB, RX, ISS, ID, IF
 			//TODO: Creo que habría que cambiar el orden de ejecución de las etapas para que no se sobreescriban los registros
-		    etapa_IF(); // etapa_IF();
-		    etapa_ID(instructionWindow, rob, firstIndexRob);
-		    etapa_ISS(instructionWindow, functionUnits, rob);
-		    etapa_EX(functionUnits, rob);
-		    etapa_WB(rob, instructionWindow);
+			etapa_WB(rob, instructionWindow);
+			etapa_EX(functionUnits, rob);
+			etapa_ISS(instructionWindow, functionUnits, rob);
+			etapa_ID(instructionWindow, rob, firstIndexRob);
+			etapa_IF(); // etapa_IF();
+
+
 		    //Mostrar el contenido de las distintas estructuras para ver como evoluciona la simulación
 		    show_instructionQueue();
 		    show_instructionWindow(instructionWindow);
@@ -85,11 +87,13 @@ public class Main {
 		    show_DataRegisters();
 
 		    //break; // TODO: Prueba.
+			if (i == 3)
+				break;
+			i++;
 		  }
 	}
 
 	private static void etapa_IF() {
-		// TODO Auto-generated method stub
 		// Check size of the queue
 		int i = 0;
 		while ( ( Memory.instructionQueue.size() < QUEUE_MAX_LENGTH ) && (i < MAX_INST)  ) {
@@ -209,7 +213,6 @@ public class Main {
 
 	// Diego
 	private static void etapa_ISS(InstructionWindow[] iw, FunctionalUnit[] functionUnits, ROB[] rob) {
-		// TODO Auto-generated method stub
 		int i=0;
 		boolean seguir = true;
 		while (i < MAX_INST && seguir) {
@@ -274,6 +277,7 @@ public class Main {
 				if(functionalUnits[i].execute()) {
 					rob[functionalUnits[i].robLine].res = functionalUnits[i].res;
 					rob[functionalUnits[i].robLine].stage = F0;
+					throw new RuntimeException();
 				}
 			}
 		}
@@ -299,7 +303,6 @@ public class Main {
 				seguir = false;
 		}
 
-		// TODO: Segundo while transformao en un for
 		int robPointer = firstIndexRob; // Para que no se modifique el puntero original
 		for ( i = 0; i < ROB_LENGTH; i++ ) {
 			if ( (rob[robPointer].stage == F0) && (rob[robPointer].validLine == 1) ) { // Linea válida con estado a F0
@@ -328,7 +331,7 @@ public class Main {
 	//SHOWERS (Mostradores, no duchas xDD)
 	// Diego
 	private static void show_instructionQueue() {
-		// TODO Auto-generated method stub
+		System.out.println("Instruction queue.");
 		for (Instruction ins : Memory.instructionQueue) {
 			if (ins != null)
 				System.out.println(ins.toString());
@@ -337,7 +340,6 @@ public class Main {
 	}
 	// Diego
 	private static void show_instructionWindow(InstructionWindow[] instructionWindow) {
-		// TODO Auto-generated method stub
 		for (int i = 0; i < WINDOW_SIZE; i++) {
 			System.out.println(instructionWindow[i].toString());
 		}
@@ -354,7 +356,6 @@ public class Main {
 			System.out.print(""+rob[i].vaildRes+"\t");
 			System.out.println(rob[i].stage);
 		}*/
-		// TODO: Printeo de forma ordenada. Desde el inicio real del buffer.
 		int robPointer = firstIndexRob;
 		for (int i = 0; i < ROB_LENGTH; i++) {
 			System.out.println(rob[robPointer].toString());
