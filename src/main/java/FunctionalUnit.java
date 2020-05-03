@@ -69,31 +69,26 @@ public class FunctionalUnit {
 		this.cycleCount++;
 		if(cycleCount >= maxCycles) {
 			if (this.op == ADD_OP) {
-				Memory.registers[this.res].data = Memory.registers[this.opA].data+ Memory.registers[this.opB].data + this.inm;
-				Memory.registers[this.res].validData = 1;
+				this.res = this.opA+ this.opB + this.inm;
 				return true;
 			}
 			if (this.op == SUB_OP) {
-				Memory.registers[this.res].data = Memory.registers[this.opA].data - Memory.registers[this.opB].data - this.inm;
-				Memory.registers[this.res].validData = 1;
+				this.res = this.opA - this.opB - this.inm;
 				return true;
 			}
 			if (this.op == CHARGE_OP) {
-				Memory.registers[this.res].data = Memory.dataMem[Memory.registers[this.opA].data + this.inm];
-				Memory.registers[this.res].validData = 1;
+				this.res = Memory.dataMem[this.opA + this.inm];
 				return true;
 			}
 			if (this.op == STORE_OP) {
-				Memory.dataMem[Memory.registers[this.opA].data + this.inm] = Memory.registers[this.opB].data;
-				Memory.registers[this.res].validData = 1;
+				Memory.dataMem[this.opA + this.inm] = this.opB;
 				return true;
 			}
 			if (this.op == MULT_OP) {
-				Memory.registers[this.res].data = Memory.registers[this.opA].data * Memory.registers[this.opB].data;
-				Memory.registers[this.res].validData = 1;
+				this.res = this.opA * this.opB;
 				return true;
 			}
-			throw new RuntimeException("Operaci�n no encontrada");
+			throw new RuntimeException("Operacion no encontrada");
 		}
 		return false;
 	}
