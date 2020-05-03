@@ -93,7 +93,6 @@ public class Main {
 			show_ROB(rob);
 			//show_DataRegisters();
 
-			if (i>=10) throw new RuntimeException();
 			i++;
 		  }
 	}
@@ -358,19 +357,11 @@ public class Main {
 	}
 
 	private static void show_ROB(ROB[] rob) {
-		/*System.out.println("\tlinea_valida\tDestino\tres\tres_valido\tetapa");
-		for(int i=0; i<ROB_LENGTH; i++) {
-			System.out.print("L"+i+"\t");
-			System.out.print(""+rob[i].validLine+"\t\t");
-			System.out.print(""+rob[i].destReg+"\t");
-			System.out.print(""+rob[i].res+"\t");
-			System.out.print(""+rob[i].vaildRes+"\t");
-			System.out.println(rob[i].stage);
-		}*/
+		
 		int robPointer = firstIndexRob;
 		if (robPointer < 0) robPointer = 0;
 		for (int i = 0; i < ROB_LENGTH; i++) {
-			System.out.println(rob[robPointer].toString());
+			System.out.println(rob[i].toString());
 			robPointer = (robPointer + 1) % ROB_LENGTH;
 		}
 	}
