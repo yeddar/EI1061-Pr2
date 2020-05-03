@@ -65,7 +65,7 @@ public class FunctionalUnit {
 		return this;
 	}
 
-	public boolean execute() {
+	public boolean execute() { // TODO: Cambiar diecciones registros por valor
 		this.cycleCount++;
 		if(cycleCount >= maxCycles) {
 			if (this.op == ADD_OP) {
@@ -93,7 +93,7 @@ public class FunctionalUnit {
 				Memory.registers[this.res].validData = 1;
 				return true;
 			}
-			throw new RuntimeException("Operación no encontrada");
+			throw new RuntimeException("Operaciï¿½n no encontrada");
 		}
 		return false;
 	}

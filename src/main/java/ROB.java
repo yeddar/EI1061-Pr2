@@ -22,6 +22,14 @@ public class ROB {
         this.stage = stage;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "ROB{" +
+                "validLine=" + validLine +
+                ", destReg=" + destReg +
+                ", res=" + res +
+                ", vaildRes=" + vaildRes +
+                ", stage=" + stage +
+                '}';
+    }
 }

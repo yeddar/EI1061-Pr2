@@ -80,6 +80,8 @@ public class Main {
 		    show_instructionWindow(instructionWindow);
 		    show_ROB(rob);
 		    show_DataRegisters();
+
+		    break; // TODO: Prueba.
 		  }
 	}
 
@@ -147,7 +149,7 @@ public class Main {
 				// Parte 1. Búsqueda operando A
 				if (Memory.registers[id_ra].validData == 1) { // Si registro tiene contenido válido
 					iw[wPointer].opA = Memory.registers[id_ra].data;
-					iw[wPointer].vOpA = 1;
+					iw[wPointer].vOpA = 1; // TODO: Validar línea de instrucciones
 				} else { // Si no contenido válido
 					// Búsqueda en ROB operando A
 					int robLine = busquedaROB(rob, robPointer, id_ra);
@@ -165,8 +167,8 @@ public class Main {
 				//Parte 2. Búsqueda operando B
 				// Operando B. Tener en cuenta que puede ser dato inmediato
 				if (ins.getType() == Memory.typeI) { //Type I instruction
-					iw[wPointer].opB = ins.getInm();
-					iw[wPointer].vOpB = 1;
+					iw[wPointer].inm = ins.getInm(); // TODO: Cambiado
+
 				} else if (Memory.registers[id_rb].validData == 1) {
 					iw[wPointer].opB = ins.getRb();
 					iw[wPointer].vOpB = 1;
@@ -187,7 +189,12 @@ public class Main {
 				// Parte 3. Añadir intrucción en ROB
 				// Add instruction into ROB
 				addLineROB(rob, 1, id_rc, 0, 0, ID);
-				wPointer++; // Incrementar puntero de ventana
+
+				// Marcar línea ventana inst. como válida e incrementar puntero.
+				iw[wPointer].validLine = 1;
+				wPointer++;
+
+
 			}// Fin while
 			// Actualizar tamaño ventana intrucciones
 			inst_instructionWindow = 2;
@@ -200,7 +207,7 @@ public class Main {
 		// TODO Auto-generated method stub
 		int i=0;
 		boolean seguir = true;
-		while (i<2 && seguir) {
+		while (i < MAX_INST && seguir) {
 			if(iw[i].validLine == 1) {
 				if ((iw[i].op == Memory.add) || (iw[i].op == Memory.sub) || (iw[i].op == Memory.addi) || (iw[i].op == Memory.subi)) {
 					if (iw[i].vOpA == 1 && iw[i].vOpB == 1) { // Esto sieve para tal...
@@ -270,17 +277,15 @@ public class Main {
 	private static void etapa_WB(ROB[] rob, InstructionWindow[] instructionWindow) {
 		int i=0;
 		boolean seguir = true;
-		int robPointer = firstIndexRob; // Para que no se modifique el puntero original
-		while (i<2 && seguir) {
-			if (rob[robPointer].stage == F1 && rob[robPointer].validLine == 1) {
-				if (rob[robPointer].destReg == -1) {  // TODO: Esto es si la instrucción es sw? En ese caso sería !=
-					Memory.registers[rob[robPointer].destReg].data = rob[robPointer].res;
-					Memory.registers[rob[robPointer].destReg].validData = 1;
-					rob[robPointer].validLine = 0; // Se invalida la línea
-					lastIndexRob++; // A su vez también se 'elimina' del buffer
+		while (i < MAX_INST && seguir) {
+			if (rob[firstIndexRob].stage == F1 && rob[firstIndexRob].validLine == 1) {
+
+				if (rob[firstIndexRob].destReg < 0) { // Si es inst sw
+					Memory.registers[rob[firstIndexRob].destReg].data = rob[firstIndexRob].res;
+					Memory.registers[rob[firstIndexRob].destReg].validData = 1;
+					rob[firstIndexRob].validLine = 0; // Se invalida la línea
 				}
-				//firstIndexRob = (firstIndexRob + 1) % ROB_LENGTH; // TODO: Estás modificando puntero original, solo debe ser modificado cuando se añade un elemento.
-				robPointer = (robPointer + 1) % ROB_LENGTH;
+				firstIndexRob = (firstIndexRob + 1) % ROB_LENGTH;
 				inst_rob--;
 				i++;
 				numOfInstructions--;
@@ -290,7 +295,7 @@ public class Main {
 		}
 
 		// TODO: Segundo while transformao en un for
-		robPointer = firstIndexRob; // Para que no se modifique el puntero original
+		int robPointer = firstIndexRob; // Para que no se modifique el puntero original
 		for ( i = 0; i < ROB_LENGTH; i++ ) {
 			if ( (rob[robPointer].stage == F0) && (rob[robPointer].validLine == 1) ) { // Linea válida con estado a F0
 				// Pasar a F1 y marcar res válido
@@ -329,8 +334,7 @@ public class Main {
 		
 		
 	}
-	
-	
+
 	//SHOWERS (Mostradores, no duchas xDD)
 	// Diego
 	private static void show_instructionQueue() {
@@ -351,7 +355,7 @@ public class Main {
 	}
 
 	private static void show_ROB(ROB[] rob) {
-		System.out.println("\tlinea_valida\tDestino\tres\tres_valido\tetapa");
+		/*System.out.println("\tlinea_valida\tDestino\tres\tres_valido\tetapa");
 		for(int i=0; i<ROB_LENGTH; i++) {
 			System.out.print("L"+i+"\t");
 			System.out.print(""+rob[i].validLine+"\t\t");
@@ -359,6 +363,11 @@ public class Main {
 			System.out.print(""+rob[i].res+"\t");
 			System.out.print(""+rob[i].vaildRes+"\t");
 			System.out.println(rob[i].stage);
+		}*/
+		// TODO: Printeo de forma ordenada. Desde el inicio real del buffer.
+		int robPointer = firstIndexRob;
+		for (int i = 0; i < ROB_LENGTH; i++) {
+			System.out.println(rob[robPointer++].toString());
 		}
 	}
 

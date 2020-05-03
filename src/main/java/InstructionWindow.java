@@ -1,5 +1,5 @@
 public class InstructionWindow {
-    int inm;
+
 	int validLine;
     int op;
     int type;
@@ -8,6 +8,7 @@ public class InstructionWindow {
     int opB;
     int vOpB;
     int robLine;
+    int inm;
 
     public InstructionWindow(int validLine, int op, int type, int opA, int vOpA, int opB, int vOpB, int inm, int robLine) {
         this.validLine = validLine;
