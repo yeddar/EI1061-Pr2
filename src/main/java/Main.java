@@ -3,7 +3,7 @@ public class Main {
 	final static int NUM_REG = 16;
 	final static int NUM_DAT = 32;
 	final static int NUM_INS = 32;
-	final static String FILE_NAME = "/Users/diegobenitez/IdeaProjects/EI1061/Practica2/src/main/java/instructions.txt";
+	final static String FILE_NAME = "instructions.txt";
 	final static int QUEUE_MAX_LENGTH = 6;
 	final static int WINDOW_SIZE = 2;
 	final static int ROB_LENGTH = 6;
@@ -191,6 +191,8 @@ public class Main {
 				addLineROB(rob, 1, id_rc, 0, 0, ID);
 
 				// Marcar línea ventana inst. como válida e incrementar puntero.
+				iw[wPointer].op = ins.getOperationCode();
+				iw[wPointer].type = ins.getType();
 				iw[wPointer].validLine = 1;
 				wPointer++;
 
