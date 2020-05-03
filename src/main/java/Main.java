@@ -99,6 +99,7 @@ public class Main {
 		// Check size of the queue
 		int i = 0;
 		while ( ( Memory.instructionQueue.size() < QUEUE_MAX_LENGTH ) && (i < MAX_INST)  ) {
+			// if (programCounter == numOfInstructions) TODO: Mirar
 			Memory.instructionQueue.add(Memory.instructionMem[programCounter++]);
 			i++;
 
@@ -146,9 +147,10 @@ public class Main {
 
 		if ( inst_instructionWindow == 0 ) {
 			int wPointer = 0;
-			System.out.println("---------------------------"); // TODO: Prueba
+			System.out.println("---------------------------"+Memory.instructionQueue.size()); // TODO: Prueba
 			while ( (Memory.instructionQueue.size() > 0) && wPointer < MAX_INST) {
 				Instruction ins = Memory.instructionQueue.poll();
+				if (ins == null) break;
 				// Antes de cargar instrucción, buscar en banco de registros validez y ROB
 
 				// Register identifiers
