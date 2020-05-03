@@ -70,6 +70,7 @@ public class Main {
 		while ((inst_rob > 0) || (numOfInstructions > 0)) { // un ciclo de simulación ejecuta las 5 etapas.
 			System.out.println("inst_rob = "+inst_rob);
 			System.out.println("numOfInstruction = "+numOfInstructions);
+			System.out.println("Numero ventana instruccion = "+ inst_instructionWindow);
 
 		    // WB, RX, ISS, ID, IF
 			//TODO: Creo que habría que cambiar el orden de ejecución de las etapas para que no se sobreescriban los registros
@@ -80,14 +81,15 @@ public class Main {
 			etapa_IF(); // etapa_IF();
 
 
-		    //Mostrar el contenido de las distintas estructuras para ver como evoluciona la simulación
-		    show_instructionQueue();
-		    show_instructionWindow(instructionWindow);
-		    show_ROB(rob);
-		    show_DataRegisters();
+			//Mostrar el contenido de las distintas estructuras para ver como evoluciona la simulación
+			System.out.println("\nCiclo numero "+i+"\n");
+			show_instructionQueue();
+			show_instructionWindow(instructionWindow);
+			show_ROB(rob);
+			//show_DataRegisters();
 
-		    //break; // TODO: Prueba.
-			if (i == 3)
+			//break; // TODO: Prueba.
+			if (i == 5)
 				break;
 			i++;
 		  }
@@ -144,6 +146,7 @@ public class Main {
 
 		if ( inst_instructionWindow == 0 ) {
 			int wPointer = 0;
+			System.out.println("---------------------------"); // TODO: Prueba
 			while ( (Memory.instructionQueue.size() > 0) && wPointer < MAX_INST) {
 				Instruction ins = Memory.instructionQueue.poll();
 				// Antes de cargar instrucción, buscar en banco de registros validez y ROB
@@ -203,10 +206,9 @@ public class Main {
 				iw[wPointer].validLine = 1;
 				wPointer++;
 
-
+				// Actualizar tamaño ventana intrucciones
+				inst_instructionWindow++;
 			}// Fin while
-			// Actualizar tamaño ventana intrucciones
-			inst_instructionWindow = 2;
 		} // fin if
 	}
 
@@ -217,6 +219,7 @@ public class Main {
 		boolean seguir = true;
 		while (i < MAX_INST && seguir) {
 			if(iw[i].validLine == 1) {
+				inst_instructionWindow--; // TODO Prueba
 				if ((iw[i].op == Memory.add) || (iw[i].op == Memory.sub) || (iw[i].op == Memory.addi) || (iw[i].op == Memory.subi)) {
 					if (iw[i].vOpA == 1 && iw[i].vOpB == 1) { // Esto sieve para tal...
 						if (functionUnits[UF_SUM1].inUse == 0) { // Esto pascual ..
@@ -285,7 +288,7 @@ public class Main {
 
 	private static void etapa_WB(ROB[] rob, InstructionWindow[] instructionWindow) {
 		int i=0;
-		boolean seguir = true;
+		boolean seguir = firstIndexRob >= 0;
 		while (i < MAX_INST && seguir) {
 			if (rob[firstIndexRob].stage == F1 && rob[firstIndexRob].validLine == 1) {
 				if (rob[firstIndexRob].destReg < 0) { // Si es inst sw
@@ -305,6 +308,7 @@ public class Main {
 
 		int robPointer = firstIndexRob; // Para que no se modifique el puntero original
 		for ( i = 0; i < ROB_LENGTH; i++ ) {
+			if (robPointer < 0) break;
 			if ( (rob[robPointer].stage == F0) && (rob[robPointer].validLine == 1) ) { // Linea válida con estado a F0
 				// Pasar a F1 y marcar res válido
 				rob[robPointer].vaildRes = 1;
@@ -357,6 +361,7 @@ public class Main {
 			System.out.println(rob[i].stage);
 		}*/
 		int robPointer = firstIndexRob;
+		if (robPointer < 0) robPointer = 0;
 		for (int i = 0; i < ROB_LENGTH; i++) {
 			System.out.println(rob[robPointer].toString());
 			robPointer = (robPointer + 1) % ROB_LENGTH;
