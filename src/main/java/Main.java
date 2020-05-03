@@ -139,9 +139,10 @@ public class Main {
 			System.out.println(lastIndexRob);
 			rob[lastIndexRob].set(validLine,destReg,res,validRes,stage);
 		}
+		int devolver = lastIndexRob;
 		lastIndexRob = (lastIndexRob + 1) % ROB_LENGTH;
 		inst_rob++; // Actualiza el número de elementos en ROB
-		return 1;
+		return devolver;
 	}
 
 
@@ -203,7 +204,7 @@ public class Main {
 
 				// Parte 3. Añadir intrucción en ROB
 				// Add instruction into ROB
-				addLineROB(rob, 1, id_rc, 0, 0, ID);
+				iw[wPointer].robLine = addLineROB(rob, 1, id_rc, 0, 0, ID);
 
 				// Marcar línea ventana inst. como válida e incrementar puntero.
 				iw[wPointer].op = ins.getOperationCode();
@@ -231,16 +232,16 @@ public class Main {
 						if (functionUnits[UF_SUM1].inUse == 0) { // Esto para que, en caso de estar la FU libre, enviar la instruccion
 							if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM1].addFU();
 							else functionUnits[UF_SUM1].subFU();
-							functionUnits[UF_SUM1].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
-							lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
+							functionUnits[UF_SUM1].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
+							//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 							iw[i].validLine = 0;
 						}
 						else 
 							if (functionUnits[UF_SUM2].inUse == 0) {
 								if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM2].addFU();
 								else functionUnits[UF_SUM2].subFU();
-								functionUnits[UF_SUM2].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
-								lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
+								functionUnits[UF_SUM2].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
+								//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 								iw[i].validLine = 0;
 							}
 						
@@ -252,8 +253,8 @@ public class Main {
 							if (functionUnits[UF_CA].inUse == 0) {
 								if((iw[i].op == Memory.add) || (iw[i].op == Memory.lw)) functionUnits[UF_CA].chargeFU();
 								else functionUnits[UF_CA].storeFU();
-								functionUnits[UF_CA].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
-								lastIndexRob = (lastIndexRob+1)*ROB_LENGTH;
+								functionUnits[UF_CA].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
+								//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 								iw[i].validLine = 0;
 							}
 						}
@@ -262,8 +263,8 @@ public class Main {
 						if (iw[i].op == Memory.mult) {
 							if (iw[i].vOpA == 1 && iw[i].vOpB == 1) {
 								if (functionUnits[UF_MULT].inUse == 0) {
-									functionUnits[UF_MULT].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
-									lastIndexRob = (lastIndexRob+1)*ROB_LENGTH;
+									functionUnits[UF_MULT].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
+									//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 									iw[i].validLine = 0;
 								}
 							}
@@ -283,6 +284,8 @@ public class Main {
 		for(int i=0; i<TOTAL_UF; i++) {
 			if (functionalUnits[i].inUse == 1) {
 				if(functionalUnits[i].execute()) {
+					System.out.println("------------->"+functionalUnits[i].robLine);
+					if(functionalUnits[i].robLine<0) break;
 					rob[functionalUnits[i].robLine].res = functionalUnits[i].res;
 					rob[functionalUnits[i].robLine].stage = F0;
 				}
