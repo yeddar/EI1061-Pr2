@@ -74,10 +74,15 @@ public class Main {
 
 		    // WB, RX, ISS, ID, IF
 			//TODO: Creo que habría que cambiar el orden de ejecución de las etapas para que no se sobreescriban los registros
+			System.out.println("Etapa WB");
 			etapa_WB(rob, instructionWindow);
+			System.out.println("Etapa EX");
 			etapa_EX(functionUnits, rob);
+			System.out.println("Etapa ISS");
 			etapa_ISS(instructionWindow, functionUnits, rob);
+			System.out.println("Etapa ID");
 			etapa_ID(instructionWindow, rob, firstIndexRob);
+			System.out.println("Etapa IF");
 			etapa_IF(); // etapa_IF();
 
 
@@ -88,9 +93,6 @@ public class Main {
 			show_ROB(rob);
 			//show_DataRegisters();
 
-			//break; // TODO: Prueba.
-			if (i == 5)
-				break;
 			i++;
 		  }
 	}
@@ -147,7 +149,6 @@ public class Main {
 
 		if ( inst_instructionWindow == 0 ) {
 			int wPointer = 0;
-			System.out.println("---------------------------"+Memory.instructionQueue.size()); // TODO: Prueba
 			while ( (Memory.instructionQueue.size() > 0) && wPointer < MAX_INST) {
 				Instruction ins = Memory.instructionQueue.poll();
 				if (ins == null) break;
@@ -230,7 +231,6 @@ public class Main {
 							functionUnits[UF_SUM1].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
 							lastIndexRob = (lastIndexRob+1)*ROB_LENGTH;
 							iw[i].validLine = 0;
-							i++;
 						}
 						else 
 							if (functionUnits[UF_SUM2].inUse == 0) {
@@ -239,7 +239,6 @@ public class Main {
 								functionUnits[UF_SUM2].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
 								lastIndexRob = (lastIndexRob+1)*ROB_LENGTH;
 								iw[i].validLine = 0;
-								i++;
 							}
 						
 					}
@@ -253,7 +252,6 @@ public class Main {
 								functionUnits[UF_CA].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
 								lastIndexRob = (lastIndexRob+1)*ROB_LENGTH;
 								iw[i].validLine = 0;
-								i++;
 							}
 						}
 					}
@@ -264,10 +262,12 @@ public class Main {
 									functionUnits[UF_MULT].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
 									lastIndexRob = (lastIndexRob+1)*ROB_LENGTH;
 									iw[i].validLine = 0;
-									i++;
 								}
 							}
+						}else{
+							throw new RuntimeException("iw["+i+"].op = "+iw[i].op);
 						}
+				i++;
 				if (i==0) seguir = false;
 			}
 			else {
@@ -282,7 +282,6 @@ public class Main {
 				if(functionalUnits[i].execute()) {
 					rob[functionalUnits[i].robLine].res = functionalUnits[i].res;
 					rob[functionalUnits[i].robLine].stage = F0;
-					throw new RuntimeException();
 				}
 			}
 		}
