@@ -93,6 +93,7 @@ public class Main {
 			show_ROB(rob);
 			//show_DataRegisters();
 
+			if (i>=10) throw new RuntimeException();
 			i++;
 		  }
 	}
