@@ -136,6 +136,7 @@ public class Main {
 			rob[0].set(validLine, destReg,res,validRes,stage);
 			firstIndexRob = 0;
 		} else {
+			System.out.println(lastIndexRob);
 			rob[lastIndexRob].set(validLine,destReg,res,validRes,stage);
 		}
 		lastIndexRob = (lastIndexRob + 1) % ROB_LENGTH;
@@ -225,12 +226,13 @@ public class Main {
 			if(iw[i].validLine == 1) {
 				inst_instructionWindow--; // TODO Prueba
 				if ((iw[i].op == Memory.add) || (iw[i].op == Memory.sub) || (iw[i].op == Memory.addi) || (iw[i].op == Memory.subi)) {
-					if (iw[i].vOpA == 1 && iw[i].vOpB == 1) { // Esto sieve para tal...
-						if (functionUnits[UF_SUM1].inUse == 0) { // Esto pascual ..
+					if (iw[i].vOpA == 1 && (iw[i].vOpB == 1 || iw[i].op == Memory.addi || iw[i].op == Memory.subi) ) { // Esto sieve para mirar que las instrucciones tienen sus datos validos
+						System.out.println(functionUnits[UF_SUM1].inUse+" - "+functionUnits[UF_SUM2].inUse);
+						if (functionUnits[UF_SUM1].inUse == 0) { // Esto para que, en caso de estar la FU libre, enviar la instruccion
 							if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM1].addFU();
 							else functionUnits[UF_SUM1].subFU();
 							functionUnits[UF_SUM1].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
-							lastIndexRob = (lastIndexRob+1)*ROB_LENGTH;
+							lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 							iw[i].validLine = 0;
 						}
 						else 
@@ -238,7 +240,7 @@ public class Main {
 								if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM2].addFU();
 								else functionUnits[UF_SUM2].subFU();
 								functionUnits[UF_SUM2].init(lastIndexRob, iw[i].opA, iw[i].opB, iw[i].inm);
-								lastIndexRob = (lastIndexRob+1)*ROB_LENGTH;
+								lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 								iw[i].validLine = 0;
 							}
 						
