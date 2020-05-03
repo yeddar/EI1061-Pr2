@@ -68,6 +68,7 @@ public class FunctionalUnit {
 	public boolean execute() { // TODO: Cambiar diecciones registros por valor
 		this.cycleCount++;
 		if(cycleCount >= maxCycles) {
+			this.inUse = 0;
 			if (this.op == ADD_OP) {
 				this.res = this.opA+ this.opB + this.inm;
 				return true;
