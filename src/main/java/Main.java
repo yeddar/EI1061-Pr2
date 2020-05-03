@@ -68,6 +68,9 @@ public class Main {
 
 		
 		while ((inst_rob > 0) || (numOfInstructions > 0)) { // un ciclo de simulación ejecuta las 5 etapas.
+			System.out.println("inst_rob = "+inst_rob);
+			System.out.println("numOfInstruction = "+numOfInstructions);
+
 		    // WB, RX, ISS, ID, IF
 			//TODO: Creo que habría que cambiar el orden de ejecución de las etapas para que no se sobreescriban los registros
 		    etapa_IF(); // etapa_IF();
@@ -81,7 +84,7 @@ public class Main {
 		    show_ROB(rob);
 		    show_DataRegisters();
 
-		    break; // TODO: Prueba.
+		    //break; // TODO: Prueba.
 		  }
 	}
 
@@ -281,12 +284,12 @@ public class Main {
 		boolean seguir = true;
 		while (i < MAX_INST && seguir) {
 			if (rob[firstIndexRob].stage == F1 && rob[firstIndexRob].validLine == 1) {
-
 				if (rob[firstIndexRob].destReg < 0) { // Si es inst sw
 					Memory.registers[rob[firstIndexRob].destReg].data = rob[firstIndexRob].res;
 					Memory.registers[rob[firstIndexRob].destReg].validData = 1;
-					rob[firstIndexRob].validLine = 0; // Se invalida la línea
+
 				}
+				rob[firstIndexRob].validLine = 0; // Se invalida la línea // TODO: Se ha sacado del if interno
 				firstIndexRob = (firstIndexRob + 1) % ROB_LENGTH;
 				inst_rob--;
 				i++;
@@ -305,7 +308,7 @@ public class Main {
 				rob[robPointer].stage = F1;
 
 				// Actualización de dependencias en VI
-				for (i=0; i<MAX_INST;i++) { // Revisar las dos líneas de VI
+				for (i = 0; i < MAX_INST; i++) { // Revisar las dos líneas de VI
 					// Opernado fuente A
 					if ( (instructionWindow[i].opA == robPointer) && (instructionWindow[i].vOpA == 0) ) { // Si se encuentra dependencia en la ventana de instrucciones
 						// Se actualiza el en la línea de la VI el resultado
@@ -320,21 +323,6 @@ public class Main {
 			}
 			robPointer = (robPointer + 1) % ROB_LENGTH;
 		}
-		/* AQUI ME PIERDO, es el segundo while. Desde aquí.... */
-		/*for (int puntero = 0; puntero<ROB_LENGTH; puntero++) {
-			if (rob[puntero].validLine == F0) {
-				rob[puntero].vaildRes = 1;
-				rob[puntero].stage = F1;
-				for(i=0; i<2; i++) {
-					if(instructionWindow[i].opA == rob[puntero].res && instructionWindow[i].vOpA == 0) {
-						instructionWindow[i].opA = 
-					}
-				}
-			}
-		}
-		/*..... hasta aquí */
-		
-		
 	}
 
 	//SHOWERS (Mostradores, no duchas xDD)
@@ -369,7 +357,8 @@ public class Main {
 		// TODO: Printeo de forma ordenada. Desde el inicio real del buffer.
 		int robPointer = firstIndexRob;
 		for (int i = 0; i < ROB_LENGTH; i++) {
-			System.out.println(rob[robPointer++].toString());
+			System.out.println(rob[robPointer].toString());
+			robPointer = (robPointer + 1) % ROB_LENGTH;
 		}
 	}
 
