@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.NClob;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -87,7 +88,7 @@ public class Memory {
                     rc = Integer.parseInt(instrucDec[1].substring(1,instrucDec[1].length()-1));
                     ra = Integer.parseInt(instrucDec[2].substring(1,instrucDec[2].length()-1));
                     rb = Integer.parseInt(instrucDec[3].substring(1));
-                    instructionMem[nInstruction++] = new Instruction(add, typeR, rc, ra, rb, inm);
+                    instructionMem[nInstruction++] = new Instruction(add, typeR, rc, ra, rb, 0);
                     break;
                 case "addi":
                     //System.out.println("Es addi");
@@ -101,7 +102,7 @@ public class Memory {
                     rc = Integer.parseInt(instrucDec[1].substring(1,instrucDec[1].length()-1));
                     ra = Integer.parseInt(instrucDec[2].substring(1,instrucDec[2].length()-1));
                     rb = Integer.parseInt(instrucDec[3].substring(1));
-                    instructionMem[nInstruction++] = new Instruction(sub, typeR, rc, ra, rb, inm);
+                    instructionMem[nInstruction++] = new Instruction(sub, typeR, rc, ra, rb, 0);
                     break;
                 case "subi":
                     //System.out.println("Es subi");
@@ -115,21 +116,13 @@ public class Memory {
                     rc = Integer.parseInt(instrucDec[1].substring(1,instrucDec[1].length()-1));
                     ra = Integer.parseInt(instrucDec[2].substring(1,instrucDec[2].length()-1));
                     rb = Integer.parseInt(instrucDec[3].substring(1));
-                    instructionMem[nInstruction++] = new Instruction(mult, typeR, rc, ra, rb, inm);
+                    instructionMem[nInstruction++] = new Instruction(mult, typeR, rc, ra, rb, 0);
                     break;
                 default:
-                    instructionMem[nInstruction++] = new Instruction(nop, typeR, rc, ra, rb, inm);
-                    //System.out.println("NOP");
-
+                    throw new RuntimeException("Se esta usando otra operacion no valida. Revisar los NOP");
             }
         }
-        // TODO Quitarlo
-        // Ciclos extra
-        int devolver = nInstruction;
-        for(int i = 0; i < 4; i++)
-            instructionMem[nInstruction++] = new Instruction(nop, typeR, rc, ra, rb, inm);
-
-        return devolver;
+        return nInstruction;
     }
 
 
