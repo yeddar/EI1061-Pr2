@@ -108,6 +108,7 @@ public class Main {
 	// Puntero de linea si encuentra registro y línea es válida
 	private static int busquedaROB(ROB [] rob, int robPointer, int operand) {
 		for ( int i = 0; i < ROB_LENGTH; i++ ) {
+			if (robPointer < 0) break;
 			if ( (rob[robPointer].destReg == operand) && (rob[robPointer].validLine == 1) ) { // Dependency
 				return robPointer;
 			}
@@ -181,9 +182,11 @@ public class Main {
 				// Operando B. Tener en cuenta que puede ser dato inmediato
 				if (ins.getType() == Memory.typeI) { //Type I instruction
 					iw[wPointer].inm = ins.getInm(); // TODO: Cambiado
-
+					iw[wPointer].opB = 0;
+					iw[wPointer].vOpB = 1;
 				} else if (Memory.registers[id_rb].validData == 1) {
 					iw[wPointer].opB = Memory.registers[id_rb].data;
+					iw[wPointer].inm = 0; // TODO: Cambiado
 					iw[wPointer].vOpB = 1;
 				} else { // Buscar en ROB
 					// Búsqueda en ROB operando B
@@ -225,7 +228,6 @@ public class Main {
 				inst_instructionWindow--; // TODO Prueba
 				if ((iw[i].op == Memory.add) || (iw[i].op == Memory.sub) || (iw[i].op == Memory.addi) || (iw[i].op == Memory.subi)) {
 					if (iw[i].vOpA == 1 && (iw[i].vOpB == 1 || iw[i].op == Memory.addi || iw[i].op == Memory.subi) ) { // Esto sieve para mirar que las instrucciones tienen sus datos validos
-						System.out.println(functionUnits[UF_SUM1].inUse+" - "+functionUnits[UF_SUM2].inUse);
 						if (functionUnits[UF_SUM1].inUse == 0) { // Esto para que, en caso de estar la FU libre, enviar la instruccion
 							if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM1].addFU();
 							else functionUnits[UF_SUM1].subFU();
