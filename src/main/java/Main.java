@@ -14,12 +14,6 @@ public class Main {
 	// Número máximo de intrucciones que se pueden procesar en cada etapa por ciclo
 	public static final int MAX_INST = 2;
 
-	// Ciclos de ejecución de UF
-	public static final int
-			TOT_CICLOS_CA = 2, // Carga y almacentamiento
-			TOT_CICLOS_SR = 1, // Suma y resta
-			TOT_CICLOS_MULT = 5; //Mult
-
 	// Estapas en ROB
 	public static final int
 			ID = 0, ISS = 1, EX = 2, F0 = 3, F1 = 4;
@@ -68,21 +62,21 @@ public class Main {
 
 		int i = 0;
 		while ((inst_rob > 0) || (numOfInstructions > 0)) { // un ciclo de simulación ejecuta las 5 etapas.
-			System.out.println("inst_rob = "+inst_rob);
-			System.out.println("numOfInstruction = "+numOfInstructions);
-			System.out.println("Numero ventana instruccion = "+ inst_instructionWindow);
+			//System.out.println("inst_rob = "+inst_rob);
+			//System.out.println("numOfInstruction = "+numOfInstructions);
+			//System.out.println("Numero ventana instruccion = "+ inst_instructionWindow);
 
 		    // WB, RX, ISS, ID, IF
 			//TODO: Creo que habría que cambiar el orden de ejecución de las etapas para que no se sobreescriban los registros
-			System.out.println("Etapa WB");
+			//System.out.println("Etapa WB");
 			etapa_WB(rob, instructionWindow);
-			System.out.println("Etapa EX");
+			//System.out.println("Etapa EX");
 			etapa_EX(functionUnits, rob);
-			System.out.println("Etapa ISS");
+			//System.out.println("Etapa ISS");
 			etapa_ISS(instructionWindow, functionUnits, rob);
-			System.out.println("Etapa ID");
+			//System.out.println("Etapa ID");
 			etapa_ID(instructionWindow, rob, firstIndexRob);
-			System.out.println("Etapa IF");
+			//System.out.println("Etapa IF");
 			etapa_IF(); // etapa_IF();
 
 
@@ -101,8 +95,6 @@ public class Main {
 		// Check size of the queue
 		int i = 0;
 		while ( ( Memory.instructionQueue.size() < QUEUE_MAX_LENGTH ) && (i < MAX_INST) && (programCounter < numOfInstructions) ) {
-			// if (programCounter == numOfInstructions) TODO: Mirar
-			System.out.println("---------Instrucción: "+Memory.instructionMem[programCounter].getRa()+", "+Memory.instructionMem[programCounter].getRb()+", "+Memory.instructionMem[programCounter].getRc());
 			Memory.instructionQueue.add(Memory.instructionMem[programCounter++]);
 			i++;
 
@@ -191,7 +183,6 @@ public class Main {
 					iw[wPointer].inm = ins.getInm(); // TODO: Cambiado
 
 				} else if (Memory.registers[id_rb].validData == 1) {
-					System.out.println("Operando B = "+ins.getRb());
 					iw[wPointer].opB = Memory.registers[id_rb].data;
 					iw[wPointer].vOpB = 1;
 				} else { // Buscar en ROB
@@ -310,13 +301,9 @@ public class Main {
 		boolean seguir = firstIndexRob >= 0;
 		while (i < MAX_INST && seguir) {
 			if (rob[firstIndexRob].stage == F1 && rob[firstIndexRob].validLine == 1) {
-				System.out.println("------ Se ha encontrado instrucción con F1--------");
 				if (rob[firstIndexRob].destReg >= 0) { // TODO: Error. Se escribe en registros en todas las instrucciones excepto las de tipo SW
-					System.out.println("------ Se escribe en el banco--------dato="+rob[firstIndexRob].res);
 					Memory.registers[rob[firstIndexRob].destReg].data = rob[firstIndexRob].res;
 					Memory.registers[rob[firstIndexRob].destReg].validData = 1;
-					System.out.println(Memory.registers[rob[firstIndexRob].destReg].data);
-
 				}
 				rob[firstIndexRob].validLine = 0; // Se invalida la línea // TODO: Se ha sacado del if interno
 				firstIndexRob = (firstIndexRob + 1) % ROB_LENGTH;
@@ -357,7 +344,8 @@ public class Main {
 	//SHOWERS (Mostradores, no duchas xDD)
 	// Diego
 	private static void show_instructionQueue() {
-		System.out.println("Instruction queue.");
+		System.out.println("Instruction queue:");
+		if(Memory.instructionQueue.isEmpty()) System.out.println("vacía");
 		for (Instruction ins : Memory.instructionQueue) {
 			if (ins != null)
 				System.out.println(ins.toString());
