@@ -68,15 +68,15 @@ public class Main {
 
 		    // WB, RX, ISS, ID, IF
 			//TODO: Creo que habría que cambiar el orden de ejecución de las etapas para que no se sobreescriban los registros
-			//System.out.println("Etapa WB");
+			System.out.println("Etapa WB");
 			etapa_WB(rob, instructionWindow);
-			//System.out.println("Etapa EX");
+			System.out.println("Etapa EX");
 			etapa_EX(functionUnits, rob);
-			//System.out.println("Etapa ISS");
+			System.out.println("Etapa ISS");
 			etapa_ISS(instructionWindow, functionUnits, rob);
-			//System.out.println("Etapa ID");
+			System.out.println("Etapa ID");
 			etapa_ID(instructionWindow, rob, firstIndexRob);
-			//System.out.println("Etapa IF");
+			System.out.println("Etapa IF");
 			etapa_IF(); // etapa_IF();
 
 
@@ -288,7 +288,7 @@ public class Main {
 								}
 							}
 						}else{
-							//throw new RuntimeException("iw["+i+"].op = "+iw[i].op);
+							throw new RuntimeException("iw["+i+"].op = "+iw[i].op);
 						}
 				}
 				if (i==0) seguir = false;
