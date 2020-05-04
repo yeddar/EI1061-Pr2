@@ -18,8 +18,7 @@ public class InstructionWindow {
     @Override
     public String toString() {
         return "InstructionWindow{" +
-                "inm=" + inm +
-                ", validLine=" + validLine +
+                "validLine=" + validLine +
                 ", op=" + op +
                 ", type=" + type +
                 ", opA=" + opA +
@@ -27,6 +26,7 @@ public class InstructionWindow {
                 ", opB=" + opB +
                 ", vOpB=" + vOpB +
                 ", robLine=" + robLine +
+                ", inm=" + inm +
                 '}';
     }
 }

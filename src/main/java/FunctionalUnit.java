@@ -90,7 +90,7 @@ public class FunctionalUnit {
 				return true;
 			}
 			if (this.op == MULT_OP) {
-				//System.out.println("-----Unidad de mult: opA="+opA+", opB="+opB);
+				System.out.println("-----Unidad de mult: opA="+opA+", opB="+opB);
 				this.res = this.opA * this.opB;
 				return true;
 			}

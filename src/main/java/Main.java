@@ -87,7 +87,10 @@ public class Main {
 			show_ROB(rob);
 			show_DataRegisters();
 
+//			if(i == 7)
+//				break;
 			i++;
+
 		  }
 	}
 
@@ -333,7 +336,9 @@ public class Main {
 						instructionWindow[i].opA = rob[robPointer].res;
 						instructionWindow[i].vOpA = 1;
 					// Operando fuente B
-					} else if ( (instructionWindow[i].opB == robPointer) && (instructionWindow[i].vOpB == 0) ) {
+					}
+					// TODO: Aquí estaba el error de registros iguales en misma instrucción
+					if ( (instructionWindow[i].opB == robPointer) && (instructionWindow[i].vOpB == 0) ) {
 						instructionWindow[i].opB = rob[robPointer].res;
 						instructionWindow[i].vOpB = 1;
 					}
