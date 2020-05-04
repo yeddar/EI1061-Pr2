@@ -85,6 +85,7 @@ public class Main {
 			show_instructionQueue();
 			show_instructionWindow(instructionWindow);
 			show_ROB(rob);
+			show_FU(functionUnits);
 			show_DataRegisters();
 
 			if(i == 20)
@@ -241,7 +242,8 @@ public class Main {
 
 							//iw[i].validLine = 0; // TODO: Cuando se borra linea de ventana hay que dejar TODOS los bits de validez a 0 y el inmediato también
 							// Lo más fácil es:
-							iw[i] = new InstructionWindow(); // Pone toda la línea a sus valores por defecto
+							iw[i].reset(); // Pone toda la línea a sus valores por defecto
+							i++;
 						}
 						else 
 							if (functionUnits[UF_SUM2].inUse == 0) {
@@ -250,12 +252,13 @@ public class Main {
 								functionUnits[UF_SUM2].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 								//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 								//iw[i].validLine = 0;
-								iw[i] = new InstructionWindow();
+								iw[i].reset();
+								i++;
 							}
 						
 					}
 				}
-				else
+				else {
 					if ((iw[i].op == Memory.lw) || (iw[i].op == Memory.sw) ) {
 						if (iw[i].vOpA == 1 && (iw[i].op == Memory.lw || iw[i].vOpB == 1)) {
 							if (functionUnits[UF_CA].inUse == 0) {
@@ -264,7 +267,8 @@ public class Main {
 								functionUnits[UF_CA].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 								//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 								//iw[i].validLine = 0;
-								iw[i] = new InstructionWindow();
+								iw[i].reset();
+								i++;
 							}
 						}
 					}
@@ -275,14 +279,16 @@ public class Main {
 									functionUnits[UF_MULT].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 									//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 									//iw[i].validLine = 0;
-									iw[i] = new InstructionWindow();
+									iw[i].reset();
+									i++;
 								}
 							}
 						}else{
 							throw new RuntimeException("iw["+i+"].op = "+iw[i].op);
 						}
-				i++;
+				}
 				if (i==0) seguir = false;
+				
 			}
 			else {
 				i++;
@@ -388,6 +394,12 @@ public class Main {
 			System.out.print(((i+2*cantidad)>=10)?"\t\tRegistro "+(i+2*cantidad)+" -> "+Memory.registers[(i+2*cantidad)].data:"\t\tRegistro  "+(i+2*cantidad)+" -> "+Memory.registers[(i+2*cantidad)].data);
 			if ((i+3*cantidad)<total) System.out.print(((i+3*cantidad)>=10)?"\t\tRegistro "+(i+3*cantidad)+" -> "+Memory.registers[(i+3*cantidad)].data:"\t\tRegistro  "+(i+3*cantidad)+" -> "+Memory.registers[(i+3*cantidad)].data);
 			System.out.println();
+		}
+	}
+	
+	private static void show_FU(FunctionalUnit[] fu) {
+		for(FunctionalUnit i : fu) {
+			System.out.println(i);
 		}
 	}
 	
