@@ -14,7 +14,7 @@ public class InstructionWindow {
 
     public InstructionWindow() {
         super();
-        reset();
+        rset();
 	}
 
     @Override
@@ -32,8 +32,8 @@ public class InstructionWindow {
                 ']';
     }
     
-    public void reset() {
-    	validLine = 1;
+    public void rset() {
+    	validLine = 0;
         op = -1;
         type = -1;
         opA = -1;

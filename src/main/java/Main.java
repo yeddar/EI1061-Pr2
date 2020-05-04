@@ -146,8 +146,9 @@ public class Main {
 	private static void etapa_ID(InstructionWindow[] iw, ROB[] rob, int robPointer) {
 		// TODO Hay que crear una función para la búsqueda de un operando en ROB y evitar la repetición de código.
 		// Get instructions from instructions queue.
-
+		System.out.println(inst_instructionWindow);
 		if ( inst_instructionWindow == 0 ) {
+			System.out.println(1234567890);
 			int wPointer = 0;
 			while ( (Memory.instructionQueue.size() > 0) && wPointer < MAX_INST) {
 				Instruction ins = Memory.instructionQueue.poll();
@@ -231,10 +232,10 @@ public class Main {
 		boolean seguir = true;
 		while (i < MAX_INST && seguir) {
 			if(iw[i].validLine == 1) {
-				inst_instructionWindow--; // TODO Prueba
 				if ((iw[i].op == Memory.add) || (iw[i].op == Memory.sub) || (iw[i].op == Memory.addi) || (iw[i].op == Memory.subi)) {
 					if (iw[i].vOpA == 1 && (iw[i].vOpB == 1 || iw[i].op == Memory.addi || iw[i].op == Memory.subi) ) { // Esto sieve para mirar que las instrucciones tienen sus datos validos
 						if (functionUnits[UF_SUM1].inUse == 0) { // Esto para que, en caso de estar la FU libre, enviar la instruccion
+							inst_instructionWindow--; // TODO Prueba
 							if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM1].addFU();
 							else functionUnits[UF_SUM1].subFU();
 							functionUnits[UF_SUM1].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
@@ -242,17 +243,18 @@ public class Main {
 
 							//iw[i].validLine = 0; // TODO: Cuando se borra linea de ventana hay que dejar TODOS los bits de validez a 0 y el inmediato también
 							// Lo más fácil es:
-							iw[i].reset(); // Pone toda la línea a sus valores por defecto
+							iw[i].rset(); // Pone toda la línea a sus valores por defecto
 							i++;
 						}
 						else 
 							if (functionUnits[UF_SUM2].inUse == 0) {
+								inst_instructionWindow--; // TODO Prueba
 								if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM2].addFU();
 								else functionUnits[UF_SUM2].subFU();
 								functionUnits[UF_SUM2].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 								//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 								//iw[i].validLine = 0;
-								iw[i].reset();
+								iw[i].rset();
 								i++;
 							}
 						
@@ -262,12 +264,13 @@ public class Main {
 					if ((iw[i].op == Memory.lw) || (iw[i].op == Memory.sw) ) {
 						if (iw[i].vOpA == 1 && (iw[i].op == Memory.lw || iw[i].vOpB == 1)) {
 							if (functionUnits[UF_CA].inUse == 0) {
+								inst_instructionWindow--; // TODO Prueba
 								if((iw[i].op == Memory.add) || (iw[i].op == Memory.lw)) functionUnits[UF_CA].chargeFU();
 								else functionUnits[UF_CA].storeFU();
 								functionUnits[UF_CA].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 								//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 								//iw[i].validLine = 0;
-								iw[i].reset();
+								iw[i].rset();
 								i++;
 							}
 						}
@@ -276,15 +279,16 @@ public class Main {
 						if (iw[i].op == Memory.mult) {
 							if (iw[i].vOpA == 1 && iw[i].vOpB == 1) {
 								if (functionUnits[UF_MULT].inUse == 0) {
+									inst_instructionWindow--; // TODO Prueba
 									functionUnits[UF_MULT].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 									//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 									//iw[i].validLine = 0;
-									iw[i].reset();
+									iw[i].rset();
 									i++;
 								}
 							}
 						}else{
-							throw new RuntimeException("iw["+i+"].op = "+iw[i].op);
+							//throw new RuntimeException("iw["+i+"].op = "+iw[i].op);
 						}
 				}
 				if (i==0) seguir = false;
