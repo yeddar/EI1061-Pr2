@@ -14,6 +14,7 @@ public class InstructionWindow {
 
     public InstructionWindow() {
         super();
+        reset();
 	}
 
     @Override
