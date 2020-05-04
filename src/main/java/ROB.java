@@ -24,12 +24,12 @@ public class ROB {
 
     @Override
     public String toString() {
-        return "ROB{" +
+        return "[" +
                 "validLine=" + validLine +
                 ", destReg=" + destReg +
                 ", res=" + res +
                 ", vaildRes=" + vaildRes +
                 ", stage=" + stage +
-                '}';
+                ']';
     }
 }

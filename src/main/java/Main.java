@@ -87,8 +87,8 @@ public class Main {
 			show_ROB(rob);
 			show_DataRegisters();
 
-//			if(i == 7)
-//				break;
+			if(i == 20)
+				break;
 			i++;
 
 		  }
@@ -162,7 +162,7 @@ public class Main {
 				if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
 					Memory.registers[id_rc].validData = 0;
 				}
-
+				
 				// Parte 1. Búsqueda operando A
 				if (Memory.registers[id_ra].validData == 1) { // Si registro tiene contenido válido
 					iw[wPointer].opA = Memory.registers[id_ra].data;
@@ -362,7 +362,7 @@ public class Main {
 	// Diego
 	private static void show_instructionWindow(InstructionWindow[] instructionWindow) {
 		for (int i = 0; i < WINDOW_SIZE; i++) {
-			System.out.println(instructionWindow[i].toString());
+			System.out.println("InstructionWindow["+i+"] = "+instructionWindow[i].toString());
 		}
 		
 	}
@@ -372,14 +372,20 @@ public class Main {
 		int robPointer = firstIndexRob;
 		if (robPointer < 0) robPointer = 0;
 		for (int i = 0; i < ROB_LENGTH; i++) {
-			System.out.println(rob[i].toString());
+			System.out.println("ROB["+i+"] = "+rob[i].toString());
 			robPointer = (robPointer + 1) % ROB_LENGTH;
 		}
 	}
 
 	private static void show_DataRegisters() { // TODO: Se estaba mostrando la memoria de datos en lugar del banco de registros.
-		for(int i=0; i<Memory.registers.length; i++) {
-			System.out.println("Registro "+i+" -> "+Memory.registers[i].data);
+		int total = Memory.registers.length;
+		int cantidad = (total+3)/4;
+		for(int i=0; i<cantidad; i++) {
+			System.out.print((i>=10)? "Registro "+i+" -> "+Memory.registers[i].data:"Registro  "+i+" -> "+Memory.registers[i].data);
+			System.out.print(((i+cantidad)>=10)?"\t\tRegistro "+(i+cantidad)+" -> "+Memory.registers[(i+cantidad)].data:"\t\tRegistro  "+(i+cantidad)+" -> "+Memory.registers[(i+cantidad)].data);
+			System.out.print(((i+2*cantidad)>=10)?"\t\tRegistro "+(i+2*cantidad)+" -> "+Memory.registers[(i+2*cantidad)].data:"\t\tRegistro  "+(i+2*cantidad)+" -> "+Memory.registers[(i+2*cantidad)].data);
+			if ((i+3*cantidad)<total) System.out.print(((i+3*cantidad)>=10)?"\t\tRegistro "+(i+3*cantidad)+" -> "+Memory.registers[(i+3*cantidad)].data:"\t\tRegistro  "+(i+3*cantidad)+" -> "+Memory.registers[(i+3*cantidad)].data);
+			System.out.println();
 		}
 	}
 	

@@ -17,7 +17,7 @@ public class InstructionWindow {
 
     @Override
     public String toString() {
-        return "InstructionWindow{" +
+        return "[" +
                 "validLine=" + validLine +
                 ", op=" + op +
                 ", type=" + type +
@@ -27,6 +27,6 @@ public class InstructionWindow {
                 ", vOpB=" + vOpB +
                 ", robLine=" + robLine +
                 ", inm=" + inm +
-                '}';
+                ']';
     }
 }
