@@ -158,10 +158,7 @@ public class Main {
 				int id_rb = ins.getRb();
 				int id_rc = ins.getRc();
 
-				// Actualizar bit de validez banco de registros
-				if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
-					Memory.registers[id_rc].validData = 0;
-				}
+
 				
 				// Parte 1. Búsqueda operando A
 				if (Memory.registers[id_ra].validData == 1) { // Si registro tiene contenido válido
@@ -203,6 +200,11 @@ public class Main {
 							iw[wPointer].vOpB = 0;
 						}
 					}
+				}
+
+				// Actualizar bit de validez banco de registros
+				if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
+					Memory.registers[id_rc].validData = 0;
 				}
 
 				// Parte 3. Añadir intrucción en ROB
