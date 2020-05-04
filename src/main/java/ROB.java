@@ -8,7 +8,7 @@ public class ROB {
 
     public ROB() {
         this.validLine = 0;
-        this.destReg = 0;
+        this.destReg = -1;
         this.res = 0;
         this.vaildRes = 0;
         this.stage = 0;

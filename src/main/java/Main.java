@@ -91,7 +91,7 @@ public class Main {
 			show_instructionQueue();
 			show_instructionWindow(instructionWindow);
 			show_ROB(rob);
-			//show_DataRegisters();
+			show_DataRegisters();
 
 			i++;
 		  }
@@ -100,8 +100,9 @@ public class Main {
 	private static void etapa_IF() {
 		// Check size of the queue
 		int i = 0;
-		while ( ( Memory.instructionQueue.size() < QUEUE_MAX_LENGTH ) && (i < MAX_INST)  ) {
+		while ( ( Memory.instructionQueue.size() < QUEUE_MAX_LENGTH ) && (i < MAX_INST) && (programCounter < numOfInstructions) ) {
 			// if (programCounter == numOfInstructions) TODO: Mirar
+			System.out.println("---------Instrucción: "+Memory.instructionMem[programCounter].getRa()+", "+Memory.instructionMem[programCounter].getRb()+", "+Memory.instructionMem[programCounter].getRc());
 			Memory.instructionQueue.add(Memory.instructionMem[programCounter++]);
 			i++;
 
@@ -161,6 +162,11 @@ public class Main {
 				int id_rb = ins.getRb();
 				int id_rc = ins.getRc();
 
+				// Actualizar bit de validez banco de registros
+				if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
+					Memory.registers[id_rc].validData = 0;
+				}
+
 				// Parte 1. Búsqueda operando A
 				if (Memory.registers[id_ra].validData == 1) { // Si registro tiene contenido válido
 					iw[wPointer].opA = Memory.registers[id_ra].data;
@@ -185,7 +191,8 @@ public class Main {
 					iw[wPointer].inm = ins.getInm(); // TODO: Cambiado
 
 				} else if (Memory.registers[id_rb].validData == 1) {
-					iw[wPointer].opB = ins.getRb();
+					System.out.println("Operando B = "+ins.getRb());
+					iw[wPointer].opB = Memory.registers[id_rb].data;
 					iw[wPointer].vOpB = 1;
 				} else { // Buscar en ROB
 					// Búsqueda en ROB operando B
@@ -233,7 +240,10 @@ public class Main {
 							else functionUnits[UF_SUM1].subFU();
 							functionUnits[UF_SUM1].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 							//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
-							iw[i].validLine = 0;
+
+							//iw[i].validLine = 0; // TODO: Cuando se borra linea de ventana hay que dejar TODOS los bits de validez a 0 y el inmediato también
+							// Lo más fácil es:
+							iw[i] = new InstructionWindow(); // Pone toda la línea a sus valores por defecto
 						}
 						else 
 							if (functionUnits[UF_SUM2].inUse == 0) {
@@ -241,7 +251,8 @@ public class Main {
 								else functionUnits[UF_SUM2].subFU();
 								functionUnits[UF_SUM2].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 								//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
-								iw[i].validLine = 0;
+								//iw[i].validLine = 0;
+								iw[i] = new InstructionWindow();
 							}
 						
 					}
@@ -254,7 +265,8 @@ public class Main {
 								else functionUnits[UF_CA].storeFU();
 								functionUnits[UF_CA].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 								//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
-								iw[i].validLine = 0;
+								//iw[i].validLine = 0;
+								iw[i] = new InstructionWindow();
 							}
 						}
 					}
@@ -264,7 +276,8 @@ public class Main {
 								if (functionUnits[UF_MULT].inUse == 0) {
 									functionUnits[UF_MULT].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 									//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
-									iw[i].validLine = 0;
+									//iw[i].validLine = 0;
+									iw[i] = new InstructionWindow();
 								}
 							}
 						}else{
@@ -297,9 +310,12 @@ public class Main {
 		boolean seguir = firstIndexRob >= 0;
 		while (i < MAX_INST && seguir) {
 			if (rob[firstIndexRob].stage == F1 && rob[firstIndexRob].validLine == 1) {
-				if (rob[firstIndexRob].destReg < 0) { // Si es inst sw
+				System.out.println("------ Se ha encontrado instrucción con F1--------");
+				if (rob[firstIndexRob].destReg >= 0) { // TODO: Error. Se escribe en registros en todas las instrucciones excepto las de tipo SW
+					System.out.println("------ Se escribe en el banco--------dato="+rob[firstIndexRob].res);
 					Memory.registers[rob[firstIndexRob].destReg].data = rob[firstIndexRob].res;
 					Memory.registers[rob[firstIndexRob].destReg].validData = 1;
+					System.out.println(Memory.registers[rob[firstIndexRob].destReg].data);
 
 				}
 				rob[firstIndexRob].validLine = 0; // Se invalida la línea // TODO: Se ha sacado del if interno
@@ -366,9 +382,9 @@ public class Main {
 		}
 	}
 
-	private static void show_DataRegisters() {
-		for(int i=0; i<Memory.dataMem.length; i++) {
-			System.out.println("Registro "+i+" -> "+Memory.dataMem[i]);
+	private static void show_DataRegisters() { // TODO: Se estaba mostrando la memoria de datos en lugar del banco de registros.
+		for(int i=0; i<Memory.registers.length; i++) {
+			System.out.println("Registro "+i+" -> "+Memory.registers[i].data);
 		}
 	}
 	
