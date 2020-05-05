@@ -62,21 +62,21 @@ public class Main {
 
 		int i = 0;
 		while ((inst_rob > 0) || (numOfInstructions > 0)) { // un ciclo de simulación ejecuta las 5 etapas.
-			System.out.println("inst_rob = "+inst_rob);
-			System.out.println("numOfInstruction = "+numOfInstructions);
+			//System.out.println("inst_rob = "+inst_rob);
+			//System.out.println("numOfInstruction = "+numOfInstructions);
 			//System.out.println("Numero ventana instruccion = "+ inst_instructionWindow);
 
 		    // WB, RX, ISS, ID, IF
 			//TODO: Creo que habría que cambiar el orden de ejecución de las etapas para que no se sobreescriban los registros
-			System.out.println("Etapa WB");
+			//System.out.println("Etapa WB");
 			etapa_WB(rob, instructionWindow);
-			System.out.println("Etapa EX");
+			//System.out.println("Etapa EX");
 			etapa_EX(functionUnits, rob);
-			System.out.println("Etapa ISS");
+			//System.out.println("Etapa ISS");
 			etapa_ISS(instructionWindow, functionUnits, rob);
-			System.out.println("Etapa ID");
+			//System.out.println("Etapa ID");
 			etapa_ID(instructionWindow, rob, firstIndexRob);
-			System.out.println("Etapa IF");
+			//System.out.println("Etapa IF");
 			etapa_IF(); // etapa_IF();
 
 
@@ -98,7 +98,7 @@ public class Main {
 		// Check size of the queue
 		int i = 0;
 		while ( ( Memory.instructionQueue.size() < QUEUE_MAX_LENGTH ) && (i < MAX_INST) && (programCounter < numOfInstructions) ) {
-			System.out.println("-----------Cola: "+Memory.instructionMem[programCounter]);
+			//System.out.println("-----------Cola: "+Memory.instructionMem[programCounter]);
 			Memory.instructionQueue.add(Memory.instructionMem[programCounter++]);
 			i++;
 
@@ -133,7 +133,7 @@ public class Main {
 			rob[0].set(validLine, destReg,res,validRes,stage);
 			firstIndexRob = 0;
 		} else {
-			System.out.println(lastIndexRob);
+			//System.out.println(lastIndexRob);
 			rob[lastIndexRob].set(validLine,destReg,res,validRes,stage);
 		}
 		int devolver = lastIndexRob;
@@ -146,7 +146,7 @@ public class Main {
 	private static void etapa_ID(InstructionWindow[] iw, ROB[] rob, int robPointer) {
 		// TODO Hay que crear una función para la búsqueda de un operando en ROB y evitar la repetición de código.
 		// Get instructions from instructions queue.
-		System.out.println(inst_instructionWindow);
+		//System.out.println(inst_instructionWindow);
 		if ( inst_instructionWindow == 0 ) {
 			int wPointer = 0;
 			while ( (Memory.instructionQueue.size() > 0) && wPointer < MAX_INST) {
@@ -230,7 +230,6 @@ public class Main {
 		int i=0;
 		boolean seguir = true;
 		while (i < MAX_INST && seguir) {
-			System.out.println(">>>>>>>>>>>>"+i+">>>"+iw[i]);
 			if(iw[i].validLine == 1) {
 				if ((iw[i].op == Memory.add) || (iw[i].op == Memory.sub) || (iw[i].op == Memory.addi) || (iw[i].op == Memory.subi)) {
 					if (iw[i].vOpA == 1 && (iw[i].vOpB == 1 || iw[i].op == Memory.addi || iw[i].op == Memory.subi) ) { // Esto sieve para mirar que las instrucciones tienen sus datos validos

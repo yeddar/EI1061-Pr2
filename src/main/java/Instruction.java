@@ -1,6 +1,7 @@
 public class Instruction {
 
     private int operationCode, type, rc, ra, rb, inm;
+    String opString[] = {"�op0?", "lw", "sw", "add", "sub", "addi", "subi", "mult"};
 
     public Instruction(int opCode, int type, int rc, int ra, int rb, int inm){
         this.operationCode = opCode;
@@ -40,7 +41,7 @@ public class Instruction {
     @Override
     public String toString() {
         return "Instruction{" +
-                "operationCode=" + operationCode +
+                "operationCode=" + opString[operationCode] +
                 ", type=" + type +
                 ", rc=" + rc +
                 ", ra=" + ra +
