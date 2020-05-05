@@ -88,7 +88,7 @@ public class Main {
 			show_FU(functionUnits);
 			show_DataRegisters();
 
-			//if (i==10) break;
+			if (i==20) break;
 			i++;
 
 		  }
@@ -205,11 +205,11 @@ public class Main {
 				}
 
 				// Actualizar bit de validez banco de registros
-				if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
+				//if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
 					Memory.registers[id_rc].validData = 0;
 					// Add instruction into ROB
 					iw[wPointer].robLine = addLineROB(rob, 1, id_rc, 0, 0, ID);
-				}
+				//}
 
 				// Marcar línea ventana inst. como válida e incrementar puntero.
 
@@ -257,6 +257,7 @@ public class Main {
 								iw[i].rset();
 								i++;
 							}
+							else seguir = false;
 						
 					}
 					else seguir = false;
@@ -275,6 +276,7 @@ public class Main {
 								iw[i].rset();
 								i++;
 							}
+							else seguir = false;
 						}
 						else seguir = false;
 					}
@@ -289,6 +291,7 @@ public class Main {
 									iw[i].rset();
 									i++;
 								}
+								else seguir = false;
 							}
 							else seguir = false;
 						}else{
@@ -350,7 +353,6 @@ public class Main {
 				// Actualización de dependencias en VI
 				for (i = 0; i < MAX_INST; i++) { // Revisar las dos líneas de VI
 					// Opernado fuente A
-					System.out.println(">>>>>>>>>>>>>>>>>>>>>>"+rob[robPointer]);
 					if ( (instructionWindow[i].opA == robPointer) && (instructionWindow[i].vOpA != 1) ) { // Si se encuentra dependencia en la ventana de instrucciones
 						// Se actualiza el en la línea de la VI el resultado
 						instructionWindow[i].opA = rob[robPointer].res;

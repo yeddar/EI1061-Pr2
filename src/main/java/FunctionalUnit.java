@@ -90,11 +90,13 @@ public class FunctionalUnit {
 			if (this.op == CHARGE_OP) {
 				this.res = Memory.dataMem[this.opA + this.inm];
 				System.out.println("-----Unidad de carga: opA="+opA+", inm="+inm+", res="+res);
+				//throw new RuntimeException();
 				return true;
 			}
 			if (this.op == STORE_OP) {
 				System.out.println("-----Unidad de almacenamiento: opA="+opA+", opB="+opB+", inm="+inm);
 				Memory.dataMem[this.opA + this.inm] = this.opB;
+				//throw new RuntimeException();
 				return true;
 			}
 			if (this.op == MULT_OP) {
@@ -102,7 +104,7 @@ public class FunctionalUnit {
 				this.res = this.opA * this.opB;
 				return true;
 			}
-			throw new RuntimeException("Operacion no encontrada");
+			//throw new RuntimeException("Operacion no encontrada");
 		}
 		return false;
 	}
