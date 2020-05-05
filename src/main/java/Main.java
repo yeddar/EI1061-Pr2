@@ -205,8 +205,9 @@ public class Main {
 				}
 
 				// Actualizar bit de validez banco de registros
-				//if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
+				if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
 					Memory.registers[id_rc].validData = 0;
+				}
 					// Add instruction into ROB
 					iw[wPointer].robLine = addLineROB(rob, 1, id_rc, 0, 0, ID);
 				//}
@@ -237,6 +238,7 @@ public class Main {
 							inst_instructionWindow--; // TODO Prueba
 							if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM1].addFU();
 							else functionUnits[UF_SUM1].subFU();
+							Memory.registers[rob[iw[i].robLine].destReg].validData = 0;
 							functionUnits[UF_SUM1].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 							//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 
@@ -250,6 +252,7 @@ public class Main {
 								inst_instructionWindow--; // TODO Prueba
 								if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM2].addFU();
 								else functionUnits[UF_SUM2].subFU();
+								Memory.registers[rob[iw[i].robLine].destReg].validData = 0;
 								functionUnits[UF_SUM2].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 								//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 								//iw[i].validLine = 0;
@@ -269,6 +272,7 @@ public class Main {
 								inst_instructionWindow--; // TODO Prueba
 								if((iw[i].op == Memory.add) || (iw[i].op == Memory.lw)) functionUnits[UF_CA].chargeFU();
 								else functionUnits[UF_CA].storeFU();
+								Memory.registers[rob[iw[i].robLine].destReg].validData = 0;
 								functionUnits[UF_CA].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 								//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 								//iw[i].validLine = 0;
@@ -284,6 +288,7 @@ public class Main {
 							if (iw[i].vOpA == 1 && iw[i].vOpB == 1) {
 								if (functionUnits[UF_MULT].inUse == 0) {
 									inst_instructionWindow--; // TODO Prueba
+									Memory.registers[rob[iw[i].robLine].destReg].validData = 0;
 									functionUnits[UF_MULT].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 									//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 									//iw[i].validLine = 0;
@@ -345,6 +350,7 @@ public class Main {
 		for (int ii = 0; ii < ROB_LENGTH; ii++ ) {
 			if (robPointer < 0) break;
 			if ( (rob[robPointer].stage == F0) && (rob[robPointer].validLine == 1) ) { // Linea válida con estado a F0
+				System.out.println(rob[robPointer]);
 				// Pasar a F1 y marcar res válido
 				rob[robPointer].vaildRes = 1;
 				rob[robPointer].stage = F1;
@@ -406,6 +412,14 @@ public class Main {
 			System.out.print(((i+cantidad)>=10)?"\t\tRegistro "+(i+cantidad)+" -> "+Memory.registers[(i+cantidad)].data:"\t\tRegistro  "+(i+cantidad)+" -> "+Memory.registers[(i+cantidad)].data);
 			System.out.print(((i+2*cantidad)>=10)?"\t\tRegistro "+(i+2*cantidad)+" -> "+Memory.registers[(i+2*cantidad)].data:"\t\tRegistro  "+(i+2*cantidad)+" -> "+Memory.registers[(i+2*cantidad)].data);
 			if ((i+3*cantidad)<total) System.out.print(((i+3*cantidad)>=10)?"\t\tRegistro "+(i+3*cantidad)+" -> "+Memory.registers[(i+3*cantidad)].data:"\t\tRegistro  "+(i+3*cantidad)+" -> "+Memory.registers[(i+3*cantidad)].data);
+			System.out.println();
+		}
+		System.out.println();
+		for(int i=0; i<cantidad; i++) {
+			System.out.print((i>=10)? "Registro "+i+" -> "+Memory.registers[i].validData:"Registro  "+i+" -> "+Memory.registers[i].validData);
+			System.out.print(((i+cantidad)>=10)?"\t\tRegistro "+(i+cantidad)+" -> "+Memory.registers[(i+cantidad)].validData:"\t\tRegistro  "+(i+cantidad)+" -> "+Memory.registers[(i+cantidad)].validData);
+			System.out.print(((i+2*cantidad)>=10)?"\t\tRegistro "+(i+2*cantidad)+" -> "+Memory.registers[(i+2*cantidad)].validData:"\t\tRegistro  "+(i+2*cantidad)+" -> "+Memory.registers[(i+2*cantidad)].validData);
+			if ((i+3*cantidad)<total) System.out.print(((i+3*cantidad)>=10)?"\t\tRegistro "+(i+3*cantidad)+" -> "+Memory.registers[(i+3*cantidad)].validData:"\t\tRegistro  "+(i+3*cantidad)+" -> "+Memory.registers[(i+3*cantidad)].validData);
 			System.out.println();
 		}
 	}
