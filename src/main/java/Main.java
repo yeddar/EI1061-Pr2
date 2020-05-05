@@ -230,6 +230,7 @@ public class Main {
 		int i=0;
 		boolean seguir = true;
 		while (i < MAX_INST && seguir) {
+			System.out.println(">>>>>>>>>>>>"+i+">>>"+iw[i]);
 			if(iw[i].validLine == 1) {
 				if ((iw[i].op == Memory.add) || (iw[i].op == Memory.sub) || (iw[i].op == Memory.addi) || (iw[i].op == Memory.subi)) {
 					if (iw[i].vOpA == 1 && (iw[i].vOpB == 1 || iw[i].op == Memory.addi || iw[i].op == Memory.subi) ) { // Esto sieve para mirar que las instrucciones tienen sus datos validos
@@ -258,6 +259,8 @@ public class Main {
 							}
 						
 					}
+					else seguir = false;
+					
 				}
 				else {
 					if ((iw[i].op == Memory.lw) || (iw[i].op == Memory.sw) ) {
@@ -273,6 +276,7 @@ public class Main {
 								i++;
 							}
 						}
+						else seguir = false;
 					}
 					else
 						if (iw[i].op == Memory.mult) {
@@ -286,6 +290,7 @@ public class Main {
 									i++;
 								}
 							}
+							else seguir = false;
 						}else{
 							throw new RuntimeException("iw["+i+"].op = "+iw[i].op);
 						}
@@ -335,7 +340,7 @@ public class Main {
 		}
 
 		int robPointer = firstIndexRob; // Para que no se modifique el puntero original
-		for ( i = 0; i < ROB_LENGTH; i++ ) {
+		for (int ii = 0; ii < ROB_LENGTH; ii++ ) {
 			if (robPointer < 0) break;
 			if ( (rob[robPointer].stage == F0) && (rob[robPointer].validLine == 1) ) { // Linea válida con estado a F0
 				// Pasar a F1 y marcar res válido
@@ -345,14 +350,15 @@ public class Main {
 				// Actualización de dependencias en VI
 				for (i = 0; i < MAX_INST; i++) { // Revisar las dos líneas de VI
 					// Opernado fuente A
-					if ( (instructionWindow[i].opA == robPointer) && (instructionWindow[i].vOpA == 0) ) { // Si se encuentra dependencia en la ventana de instrucciones
+					System.out.println(">>>>>>>>>>>>>>>>>>>>>>"+rob[robPointer]);
+					if ( (instructionWindow[i].opA == robPointer) && (instructionWindow[i].vOpA != 1) ) { // Si se encuentra dependencia en la ventana de instrucciones
 						// Se actualiza el en la línea de la VI el resultado
 						instructionWindow[i].opA = rob[robPointer].res;
 						instructionWindow[i].vOpA = 1;
 					// Operando fuente B
 					}
 					// TODO: Aquí estaba el error de registros iguales en misma instrucción
-					if ( (instructionWindow[i].opB == robPointer) && (instructionWindow[i].vOpB == 0) ) {
+					if ( (instructionWindow[i].opB == robPointer) && (instructionWindow[i].vOpB != 1) ) {
 						instructionWindow[i].opB = rob[robPointer].res;
 						instructionWindow[i].vOpB = 1;
 					}
