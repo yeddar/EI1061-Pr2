@@ -83,7 +83,7 @@ public class FunctionalUnit {
 				return true;
 			}
 			if (this.op == SUB_OP) {
-				//System.out.println("-----Unidad de resta: opA="+opA+", opB="+opB+", inm="+inm);
+				System.out.println("-----Unidad de resta: opA="+opA+", opB="+opB+", inm="+inm);
 				this.res = this.opA - this.opB - this.inm;
 				return true;
 			}

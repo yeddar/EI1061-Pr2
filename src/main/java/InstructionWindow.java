@@ -9,7 +9,7 @@ public class InstructionWindow {
     int vOpB;
     int robLine;
     int inm;
-    String opString[] = {"¿op0?", "lw", "sw", "add", "sub", "addi", "subi", "mult"};
+    String opString[] = {"ï¿½op0?", "lw", "sw", "add", "sub", "addi", "subi", "mult"};
 
 
     public InstructionWindow() {
@@ -36,11 +36,11 @@ public class InstructionWindow {
     	validLine = 0;
         op = -1;
         type = -1;
-        opA = -1;
-        vOpA = 0;
-        opB = -1;
-        vOpB = 0;
+        opA = 0;
+        vOpA = -1;
+        opB = 0;
+        vOpB = -1;
         robLine = -1;
-        inm = -1;
+        inm = 0;
     }
 }

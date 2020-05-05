@@ -62,8 +62,8 @@ public class Main {
 
 		int i = 0;
 		while ((inst_rob > 0) || (numOfInstructions > 0)) { // un ciclo de simulación ejecuta las 5 etapas.
-			//System.out.println("inst_rob = "+inst_rob);
-			//System.out.println("numOfInstruction = "+numOfInstructions);
+			System.out.println("inst_rob = "+inst_rob);
+			System.out.println("numOfInstruction = "+numOfInstructions);
 			//System.out.println("Numero ventana instruccion = "+ inst_instructionWindow);
 
 		    // WB, RX, ISS, ID, IF
@@ -88,8 +88,7 @@ public class Main {
 			show_FU(functionUnits);
 			show_DataRegisters();
 
-			if(i == 20)
-				break;
+			//if (i==10) break;
 			i++;
 
 		  }
@@ -99,6 +98,7 @@ public class Main {
 		// Check size of the queue
 		int i = 0;
 		while ( ( Memory.instructionQueue.size() < QUEUE_MAX_LENGTH ) && (i < MAX_INST) && (programCounter < numOfInstructions) ) {
+			System.out.println("-----------Cola: "+Memory.instructionMem[programCounter]);
 			Memory.instructionQueue.add(Memory.instructionMem[programCounter++]);
 			i++;
 
@@ -148,7 +148,6 @@ public class Main {
 		// Get instructions from instructions queue.
 		System.out.println(inst_instructionWindow);
 		if ( inst_instructionWindow == 0 ) {
-			System.out.println(1234567890);
 			int wPointer = 0;
 			while ( (Memory.instructionQueue.size() > 0) && wPointer < MAX_INST) {
 				Instruction ins = Memory.instructionQueue.poll();
@@ -160,7 +159,8 @@ public class Main {
 				int id_rb = ins.getRb();
 				int id_rc = ins.getRc();
 
-
+				// Inicializar línea ventana
+				iw[wPointer].rset();
 				
 				// Parte 1. Búsqueda operando A
 				if (Memory.registers[id_ra].validData == 1) { // Si registro tiene contenido válido
@@ -180,26 +180,26 @@ public class Main {
 					}
 				}
 
-				//Parte 2. Búsqueda operando B
+				//Parte 2. Búsqueda operando B i inmediato
 				// Operando B. Tener en cuenta que puede ser dato inmediato
 				if (ins.getType() == Memory.typeI) { //Type I instruction
 					iw[wPointer].inm = ins.getInm(); // TODO: Cambiado
-					iw[wPointer].opB = 0;
-					iw[wPointer].vOpB = 1;
-				} else if (Memory.registers[id_rb].validData == 1) {
-					iw[wPointer].opB = Memory.registers[id_rb].data;
-					iw[wPointer].inm = 0; // TODO: Cambiado
-					iw[wPointer].vOpB = 1;
-				} else { // Buscar en ROB
-					// Búsqueda en ROB operando B
-					int robLine = busquedaROB(rob, robPointer, id_rb);
-					if (robLine != -1) { // Operando válido
-						if (rob[robLine].vaildRes == 1) {
-							iw[wPointer].opB = rob[robLine].res;
-							iw[wPointer].vOpB = 1;
-						} else {
-							iw[wPointer].opB = robLine;
-							iw[wPointer].vOpB = 0;
+				}
+				if (ins.getType() == Memory.typeR || ins.getOperationCode() == Memory.sw) {
+					if (Memory.registers[id_rb].validData == 1) {
+						iw[wPointer].opB = Memory.registers[id_rb].data;
+						iw[wPointer].vOpB = 1;
+					} else { // Buscar en ROB
+						// Búsqueda en ROB operando B
+						int robLine = busquedaROB(rob, robPointer, id_rb);
+						if (robLine != -1) { // Operando válido
+							if (rob[robLine].vaildRes == 1) {
+								iw[wPointer].opB = rob[robLine].res;
+								iw[wPointer].vOpB = 1;
+							} else {
+								iw[wPointer].opB = robLine;
+								iw[wPointer].vOpB = 0;
+							}
 						}
 					}
 				}
@@ -207,13 +207,12 @@ public class Main {
 				// Actualizar bit de validez banco de registros
 				if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
 					Memory.registers[id_rc].validData = 0;
+					// Add instruction into ROB
+					iw[wPointer].robLine = addLineROB(rob, 1, id_rc, 0, 0, ID);
 				}
 
-				// Parte 3. Añadir intrucción en ROB
-				// Add instruction into ROB
-				iw[wPointer].robLine = addLineROB(rob, 1, id_rc, 0, 0, ID);
-
 				// Marcar línea ventana inst. como válida e incrementar puntero.
+
 				iw[wPointer].op = ins.getOperationCode();
 				iw[wPointer].type = ins.getType();
 				iw[wPointer].validLine = 1;
@@ -291,7 +290,10 @@ public class Main {
 							throw new RuntimeException("iw["+i+"].op = "+iw[i].op);
 						}
 				}
-				if (i==0) seguir = false;
+				if (i==0) {
+					System.out.println("Aquí nunca llego!!!!");
+					seguir = false;
+				}
 				
 			}
 			else {
