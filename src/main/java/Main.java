@@ -25,6 +25,7 @@ public class Main {
 
 	static int inst_instructionWindow = 0; // Número actual de instrucciones en su correspondiente estructura de datos
 	static int numOfInstructions = -1;
+	static int maxNumOfInstructions = -1;
 
 	static int programCounter = 0; //TODO: Es el contador del programa. Pero creo que conforme lo ibamos a hacer nosotros no hace falta
 
@@ -35,7 +36,7 @@ public class Main {
 		// Initialization of instruction memory
 		Memory.instructionMem = new Instruction[NUM_INS];
 		numOfInstructions = Memory.initializeInstructionMem(NUM_INS, FILE_NAME); //TODO: Hacer que la función devuelva el número de instrucciones
-
+		maxNumOfInstructions = numOfInstructions;
 		// Initialization of instruction queue
 		Memory.initializeInstructionsQueue();
 
@@ -60,6 +61,9 @@ public class Main {
 		}
 		
 
+		for(int i=0; i<Memory.instructionMem.length; i++)
+			System.out.println(Memory.instructionMem[i]);
+		
 		int i = 0;
 		while ((inst_rob > 0) || (numOfInstructions > 0)) { // un ciclo de simulación ejecuta las 5 etapas.
 			//System.out.println("inst_rob = "+inst_rob);
@@ -88,7 +92,7 @@ public class Main {
 			show_FU(functionUnits);
 			show_DataRegisters();
 
-			if (i==20) break;
+			//if (i==40) break;
 			i++;
 
 		  }
@@ -97,8 +101,8 @@ public class Main {
 	private static void etapa_IF() {
 		// Check size of the queue
 		int i = 0;
-		while ( ( Memory.instructionQueue.size() < QUEUE_MAX_LENGTH ) && (i < MAX_INST) && (programCounter < numOfInstructions) ) {
-			//System.out.println("-----------Cola: "+Memory.instructionMem[programCounter]);
+		while ( ( Memory.instructionQueue.size() < QUEUE_MAX_LENGTH ) && (i < MAX_INST) && (programCounter < maxNumOfInstructions) ) {
+			System.out.println("-----------Cola: "+Memory.instructionMem[programCounter]);
 			Memory.instructionQueue.add(Memory.instructionMem[programCounter++]);
 			i++;
 
@@ -111,15 +115,14 @@ public class Main {
 	// -1 si no se encuentra el operando
 	// Puntero de linea si encuentra registro y línea es válida
 	private static int busquedaROB(ROB [] rob, int robPointer, int operand) {
-		for ( int i = 0; i < ROB_LENGTH; i++ ) {
+		for ( int i = (ROB_LENGTH+lastIndexRob-1)%ROB_LENGTH; i != (ROB_LENGTH+firstIndexRob-1)%ROB_LENGTH; i=(ROB_LENGTH+i-1)%ROB_LENGTH ) {
 			if (robPointer < 0) break;
-			System.out.println(">>>>Búsqueda en ROB puntero = "+robPointer);
-			if ( (rob[robPointer].destReg == operand) && (rob[robPointer].validLine == 1) ) { // Dependency
-				return robPointer;
+			if ( (rob[i].destReg == operand) && (rob[i].validLine == 1) ) { // Dependency
+				return i;
 			}
-			//if (robPointer == 0) robPointer = ROB_LENGTH - 1;
-			//else robPointer = robPointer - 1;
-			robPointer = (robPointer + 1 ) % ROB_LENGTH;
+			if ( (rob[i].destReg == operand) && (rob[i].validLine != 1) ) { // Dependency
+				return -1;
+			}
 		}
 		return -1;
 	}
@@ -168,7 +171,7 @@ public class Main {
 
 
 				// Parte 1. Búsqueda operando A
-				if ( (Memory.registers[id_ra].validData == 1) && (busquedaROB(rob,robPointer, id_ra) == -1) ) { // Si registro tiene contenido válido
+				if ( (Memory.registers[id_ra].validData == 1) ) { // Si registro tiene contenido válido
 					if((ins.getRa() == 2) && (ins.getOperationCode() == Memory.addi) && ins.getInm() == 3) {
 						System.out.println("Instrucción entra");
 						System.out.println(ins.toString());
