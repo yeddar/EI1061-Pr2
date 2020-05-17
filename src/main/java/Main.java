@@ -119,7 +119,6 @@ public class Main {
 			if ( (rob[i].destReg == operand) && (rob[i].validLine != 1) ) { // Dependency
 				return -1;
 			}
-			//robPointer = (robPointer + 1) % ROB_LENGTH;
 		}
 		return -1;
 	}
@@ -146,6 +145,7 @@ public class Main {
 	}
 
 
+
 	private static void etapa_ID(InstructionWindow[] iw, ROB[] rob, int robPointer) {
 		// TODO Hay que crear una función para la búsqueda de un operando en ROB y evitar la repetición de código.
 		// Get instructions from instructions queue.
@@ -156,15 +156,13 @@ public class Main {
 				Instruction ins = Memory.instructionQueue.poll();
 				if (ins == null) break;
 				// Antes de cargar instrucción, buscar en banco de registros validez y ROB
-
 				// Register identifiers
 				int id_ra = ins.getRa();
 				int id_rb = ins.getRb();
 				int id_rc = ins.getRc();
-
 				// Inicializar línea ventana
 				iw[wPointer].rset();
-
+				
 				// Parte 1. Búsqueda operando A
 				if (Memory.registers[id_ra].validData == 1) { // Si registro tiene contenido válido
 					iw[wPointer].opA = Memory.registers[id_ra].data;
@@ -182,7 +180,6 @@ public class Main {
 						}
 					}
 				}
-
 				//Parte 2. Búsqueda operando B i inmediato
 				// Operando B. Tener en cuenta que puede ser dato inmediato
 				if (ins.getType() == Memory.typeI) { //Type I instruction
@@ -206,21 +203,17 @@ public class Main {
 						}
 					}
 				}
-
 				// Actualizar bit de validez banco de registros
 				//if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
 					Memory.registers[id_rc].validData = 0;
 					// Add instruction into ROB
 					iw[wPointer].robLine = addLineROB(rob, 1, id_rc, 0, 0, ID);
 				//}
-
 				// Marcar línea ventana inst. como válida e incrementar puntero.
-
 				iw[wPointer].op = ins.getOperationCode();
 				iw[wPointer].type = ins.getType();
 				iw[wPointer].validLine = 1;
 				wPointer++;
-
 				// Actualizar tamaño ventana intrucciones
 				inst_instructionWindow++;
 			}// Fin while
@@ -242,13 +235,12 @@ public class Main {
 							else functionUnits[UF_SUM1].subFU();
 							functionUnits[UF_SUM1].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
 							//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
-
 							//iw[i].validLine = 0; // TODO: Cuando se borra linea de ventana hay que dejar TODOS los bits de validez a 0 y el inmediato también
 							// Lo más fácil es:
 							iw[i].rset(); // Pone toda la línea a sus valores por defecto
 							i++;
 						}
-						else
+						else 
 							if (functionUnits[UF_SUM2].inUse == 0) {
 								inst_instructionWindow--; // TODO Prueba
 								if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM2].addFU();
@@ -260,10 +252,10 @@ public class Main {
 								i++;
 							}
 							else seguir = false;
-
+						
 					}
 					else seguir = false;
-
+					
 				}
 				else {
 					if ((iw[i].op == Memory.lw) || (iw[i].op == Memory.sw) ) {
@@ -304,14 +296,13 @@ public class Main {
 					System.out.println("Aquí nunca llego!!!!");
 					seguir = false;
 				}
-
+				
 			}
 			else {
 				i++;
 			}
 		}
 	}
-
 	private static void etapa_EX(FunctionalUnit[] functionalUnits, ROB[] rob) {
 		for(int i=0; i<TOTAL_UF; i++) {
 			if (functionalUnits[i].inUse == 1) {
@@ -351,7 +342,6 @@ public class Main {
 				// Pasar a F1 y marcar res válido
 				rob[robPointer].vaildRes = 1;
 				rob[robPointer].stage = F1;
-
 				// Actualización de dependencias en VI
 				for (i = 0; i < MAX_INST; i++) { // Revisar las dos líneas de VI
 					// Opernado fuente A
