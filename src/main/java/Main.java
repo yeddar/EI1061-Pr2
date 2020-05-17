@@ -89,7 +89,7 @@ public class Main {
 			show_DataRegisters();
 
 			//if (i==20) break;
-			//i++;
+			i++;
 
 		  }
 	}
@@ -111,12 +111,15 @@ public class Main {
 	// -1 si no se encuentra el operando
 	// Puntero de linea si encuentra registro y línea es válida
 	private static int busquedaROB(ROB [] rob, int robPointer, int operand) {
-		for ( int i = 0; i < ROB_LENGTH; i++ ) {
+		for ( int i = (lastIndexRob-1)%ROB_LENGTH; i != (firstIndexRob-1)%ROB_LENGTH; i=(i-1)%ROB_LENGTH ) {
 			if (robPointer < 0) break;
-			if ( (rob[robPointer].destReg == operand) && (rob[robPointer].validLine == 1) ) { // Dependency
-				return robPointer;
+			if ( (rob[i].destReg == operand) && (rob[i].validLine == 1) ) { // Dependency
+				return i;
 			}
-			robPointer = (robPointer + 1) % ROB_LENGTH;
+			if ( (rob[i].destReg == operand) && (rob[i].validLine != 1) ) { // Dependency
+				return -1;
+			}
+			//robPointer = (robPointer + 1) % ROB_LENGTH;
 		}
 		return -1;
 	}
