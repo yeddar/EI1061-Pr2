@@ -75,7 +75,7 @@ public class Main {
 			//System.out.println("Etapa ISS");
 			etapa_ISS(instructionWindow, functionUnits, rob);
 			//System.out.println("Etapa ID");
-			etapa_ID(instructionWindow, rob, firstIndexRob);
+			etapa_ID(instructionWindow, rob, lastIndexRob);
 			//System.out.println("Etapa IF");
 			etapa_IF(); // etapa_IF();
 
@@ -116,7 +116,9 @@ public class Main {
 			if ( (rob[robPointer].destReg == operand) && (rob[robPointer].validLine == 1) ) { // Dependency
 				return robPointer;
 			}
-			robPointer = (robPointer + 1) % ROB_LENGTH;
+			if (robPointer == 0) robPointer = ROB_LENGTH - 1;
+			else robPointer = robPointer - 1;
+			//robPointer = (robPointer - 1 ) % ROB_LENGTH;
 		}
 		return -1;
 	}
@@ -164,6 +166,7 @@ public class Main {
 				
 				// Parte 1. Búsqueda operando A
 				if (Memory.registers[id_ra].validData == 1) { // Si registro tiene contenido válido
+					System.out.println("Bit válido en banco reg. para inst. :"+ins.toString());
 					iw[wPointer].opA = Memory.registers[id_ra].data;
 					iw[wPointer].vOpA = 1; // TODO: Validar línea de instrucciones
 				} else { // Si no contenido válido
@@ -171,6 +174,7 @@ public class Main {
 					int robLine = busquedaROB(rob, robPointer, id_ra);
 					if (robLine != -1) { // Operando válido
 						if (rob[robLine].vaildRes == 1) {
+							System.out.println("Bit válido en rob. :"+ins.toString());
 							iw[wPointer].opA = rob[robLine].res;
 							iw[wPointer].vOpA = 1;
 						} else { // Operando no válido. Guarda referencia línea ROB
@@ -205,11 +209,12 @@ public class Main {
 				}
 
 				// Actualizar bit de validez banco de registros
-				//if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
+				if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
+					System.out.println(">>>>>>>>"+ins.toString());
 					Memory.registers[id_rc].validData = 0;
 					// Add instruction into ROB
 					iw[wPointer].robLine = addLineROB(rob, 1, id_rc, 0, 0, ID);
-				//}
+				}
 
 				// Marcar línea ventana inst. como válida e incrementar puntero.
 
@@ -231,6 +236,7 @@ public class Main {
 		boolean seguir = true;
 		while (i < MAX_INST && seguir) {
 			if(iw[i].validLine == 1) {
+
 				if ((iw[i].op == Memory.add) || (iw[i].op == Memory.sub) || (iw[i].op == Memory.addi) || (iw[i].op == Memory.subi)) {
 					if (iw[i].vOpA == 1 && (iw[i].vOpB == 1 || iw[i].op == Memory.addi || iw[i].op == Memory.subi) ) { // Esto sieve para mirar que las instrucciones tienen sus datos validos
 						if (functionUnits[UF_SUM1].inUse == 0) { // Esto para que, en caso de estar la FU libre, enviar la instruccion
@@ -298,7 +304,6 @@ public class Main {
 						}
 				}
 				if (i==0) {
-					System.out.println("Aquí nunca llego!!!!");
 					seguir = false;
 				}
 				
@@ -324,12 +329,14 @@ public class Main {
 
 	private static void etapa_WB(ROB[] rob, InstructionWindow[] instructionWindow) {
 		int i=0;
-		boolean seguir = firstIndexRob >= 0;
+		boolean seguir = firstIndexRob >= 0; // TODO: No lo entiendo
 		while (i < MAX_INST && seguir) {
 			if (rob[firstIndexRob].stage == F1 && rob[firstIndexRob].validLine == 1) {
 				if (rob[firstIndexRob].destReg >= 0) { // TODO: Error. Se escribe en registros en todas las instrucciones excepto las de tipo SW
+					// Buscar en ROB si hay otra línea válida que tenga contenga el mismo registro destino.
 					Memory.registers[rob[firstIndexRob].destReg].data = rob[firstIndexRob].res;
-					Memory.registers[rob[firstIndexRob].destReg].validData = 1;
+					Memory.registers[rob[firstIndexRob].destReg].validData = 1; // TODO: Aquí está el error
+
 				}
 				rob[firstIndexRob].validLine = 0; // Se invalida la línea // TODO: Se ha sacado del if interno
 				firstIndexRob = (firstIndexRob + 1) % ROB_LENGTH;
@@ -343,6 +350,7 @@ public class Main {
 
 		int robPointer = firstIndexRob; // Para que no se modifique el puntero original
 		for (int ii = 0; ii < ROB_LENGTH; ii++ ) {
+
 			if (robPointer < 0) break;
 			if ( (rob[robPointer].stage == F0) && (rob[robPointer].validLine == 1) ) { // Linea válida con estado a F0
 				// Pasar a F1 y marcar res válido
