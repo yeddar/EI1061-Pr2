@@ -78,7 +78,7 @@ public class FunctionalUnit {
 		if(cycleCount >= maxCycles) {
 			this.inUse = 0;
 			if (this.op == ADD_OP) {
-				//System.out.println("-----Unidad de suma: opA="+opA+", opB="+opB+", inm="+inm);
+				System.out.println("-----Unidad de suma: opA="+opA+", opB="+opB+", inm="+inm);
 				this.res = this.opA+ this.opB + this.inm;
 				return true;
 			}

@@ -62,10 +62,11 @@ public class Memory {
         FileReader f = new FileReader(fileName);
         BufferedReader b = new BufferedReader(f);
         // Default values for the registers
-        int ra = -1, rb = -1, rc = -1, inm = -1;
+        int ra, rb, rc, inm;
         while ((instruction = b.readLine()) != null) {
             String[] instrucDec = instruction.split(" ");
             String opType = instrucDec[0];
+
             switch (opType) {
                 case "lw":
                     //System.out.println("Es lw");
@@ -73,7 +74,7 @@ public class Memory {
                     aux = instrucDec[2].split("\\(");
                     inm = Integer.parseInt(aux[0]);
                     ra = Integer.parseInt(aux[1].substring(1,aux[1].length()-1));
-                    instructionMem[nInstruction++] = new Instruction(lw, typeI, rc, ra, rb, inm);
+                    instructionMem[nInstruction++] = new Instruction(lw, typeI, rc, ra, -1, inm);
                     break;
                 case "sw":
                     //System.out.println("Es sw");
@@ -81,7 +82,7 @@ public class Memory {
                     aux = instrucDec[2].split("\\(");
                     inm = Integer.parseInt(aux[0]);
                     ra = Integer.parseInt(aux[1].substring(1,aux[1].length()-1));
-                    instructionMem[nInstruction++] = new Instruction(sw, typeI, rc, ra, rb, inm);
+                    instructionMem[nInstruction++] = new Instruction(sw, typeI, -1, ra, rb, inm);
                     break;
                 case "add":
                     //System.out.println("Es add");
@@ -95,7 +96,7 @@ public class Memory {
                     rc = Integer.parseInt(instrucDec[1].substring(1,instrucDec[1].length()-1));
                     ra = Integer.parseInt(instrucDec[2].substring(1,instrucDec[2].length()-1));
                     inm = Integer.parseInt(instrucDec[3].substring(1));
-                    instructionMem[nInstruction++] = new Instruction(addi, typeI, rc, ra, rb, inm);
+                    instructionMem[nInstruction++] = new Instruction(addi, typeI, rc, ra, -1, inm);
                     break;
                 case "sub":
                     //System.out.println("Es sub");
@@ -103,13 +104,14 @@ public class Memory {
                     ra = Integer.parseInt(instrucDec[2].substring(1,instrucDec[2].length()-1));
                     rb = Integer.parseInt(instrucDec[3].substring(1));
                     instructionMem[nInstruction++] = new Instruction(sub, typeR, rc, ra, rb, 0);
+                    System.out.println("Instrucción subb: rb="+rb);
                     break;
                 case "subi":
                     //System.out.println("Es subi");
                     rc = Integer.parseInt(instrucDec[1].substring(1,instrucDec[1].length()-1));
                     ra = Integer.parseInt(instrucDec[2].substring(1,instrucDec[2].length()-1));
                     inm = Integer.parseInt(instrucDec[3].substring(1));
-                    instructionMem[nInstruction++] = new Instruction(subi, typeI, rc, ra, rb, inm);
+                    instructionMem[nInstruction++] = new Instruction(subi, typeI, rc, ra, -1, inm);
                     break;
                 case "mult":
                     //System.out.println("Es mult");
