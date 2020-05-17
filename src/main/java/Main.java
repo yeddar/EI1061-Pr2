@@ -164,7 +164,7 @@ public class Main {
 				iw[wPointer].rset();
 				
 				// Parte 1. Búsqueda operando A
-				if (Memory.registers[id_ra].validData == 1) { // Si registro tiene contenido válido
+				if (Memory.registers[id_ra].validData == 1 && busquedaROB(rob, robPointer, id_ra) == -1) { // Si registro tiene contenido válido
 					iw[wPointer].opA = Memory.registers[id_ra].data;
 					iw[wPointer].vOpA = 1; // TODO: Validar línea de instrucciones
 				} else { // Si no contenido válido
