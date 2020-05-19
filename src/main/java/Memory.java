@@ -26,14 +26,17 @@ public class Memory {
 
     public static void initializeDataMem(int num_dat){
     	dataMem = new int[num_dat];
-        for(int i=1; i<=num_dat; i++)
-            dataMem[i-1] = i;
+    	int value = 0;
+        for(int i=1; i<=num_dat; i++) {
+            dataMem[i - 1] = value;
+            value += 10;
+        }
     }
 
     public static void initializeRegisters(int num_reg) {
     	registers = new Register[num_reg];
         for(int i = 1; i <= num_reg; i++) {
-            registers[i - 1] = new Register(i, 1);
+            registers[i - 1] = new Register(0, 1);
         }
 
     }
@@ -104,7 +107,6 @@ public class Memory {
                     ra = Integer.parseInt(instrucDec[2].substring(1,instrucDec[2].length()-1));
                     rb = Integer.parseInt(instrucDec[3].substring(1));
                     instructionMem[nInstruction++] = new Instruction(sub, typeR, rc, ra, rb, 0);
-                    System.out.println("Instrucción subb: rb="+rb);
                     break;
                 case "subi":
                     //System.out.println("Es subi");

@@ -59,10 +59,7 @@ public class Main {
 		for(int i=0; i<ROB_LENGTH; i++) {
 			rob[i] = new ROB();
 		}
-		
 
-		for(int i=0; i<Memory.instructionMem.length; i++)
-			System.out.println(Memory.instructionMem[i]);
 		
 		int i = 0;
 		while ((inst_rob > 0) || (numOfInstructions > 0)) { // un ciclo de simulación ejecuta las 5 etapas.
@@ -85,12 +82,16 @@ public class Main {
 
 
 			//Mostrar el contenido de las distintas estructuras para ver como evoluciona la simulación
-			System.out.println("\nCiclo número "+i+"\n");
+			System.out.println();
+			System.out.println("--------------------------------------------------------------------------------------------");
+			System.out.println("\nCICLO NÚMERO "+i+"\n");
+			System.out.println("--------------------------------------------------------------------------------------------");
 			show_instructionQueue();
 			show_instructionWindow(instructionWindow);
 			show_ROB(rob);
 			show_FU(functionUnits);
 			show_DataRegisters();
+			show_DataMem();
 
 			//if (i==40) break;
 			i++;
@@ -226,7 +227,6 @@ public class Main {
 					Memory.registers[id_rc].validData = 0;
 					// Add instruction into ROB
 					iw[wPointer].robLine = addLineROB(rob, 1, id_rc, 0, 0, ID);
-				System.out.println("-x-x-x-x--x"+iw[wPointer].toString());
 
 				//}
 
@@ -384,35 +384,69 @@ public class Main {
 	//SHOWERS (Mostradores, no duchas xDD)
 	// Diego
 	private static void show_instructionQueue() {
-		System.out.println("Instruction queue:");
+		System.out.println("----------------------------------------------------------------------------------------");
+		System.out.println("COLA DE INSTRUCCIONES");
+		System.out.println("----------------------------------------------------------------------------------------");
+		System.out.printf("%10s %10s %10s %10s %10s %10s", "OP", "TIPO", "RC", "RA", "RB", "INM");
+		System.out.println();
+		System.out.println("----------------------------------------------------------------------------------------");
 		if(Memory.instructionQueue.isEmpty()) System.out.println("Cola de instrucciones vacía");
 		for (Instruction ins : Memory.instructionQueue) {
-			if (ins != null)
-				System.out.println(ins.toString());
+			if (ins != null) {
+				System.out.format("%10d %10d %10d %10d %10d %10d",
+						ins.getOperationCode(), ins.getType(), ins.getRc(), ins.getRa(), ins.getRb(), ins.getInm());
+				System.out.println();
+			}
 		}
+		System.out.println("----------------------------------------------------------------------------------------");
+
 
 	}
 	// Diego
 	private static void show_instructionWindow(InstructionWindow[] instructionWindow) {
+
+		System.out.println("----------------------------------------------------------------------------------------------------------------");
+		System.out.println("VENTANA DE INSTRUCCIONES");
+		System.out.println("----------------------------------------------------------------------------------------------------------------");
+		System.out.printf("%5s %10s %10s %10s %10s %10s %10s %10s %10s %10s","", "VLINE", "OP", "TIPO", "OPA", "VOPA", "OPB", "VOPB", "INM", "LINEA ROB");
+		System.out.println();
+		System.out.println("----------------------------------------------------------------------------------------------------------------");
+		String type = "(+/-)";
 		for (int i = 0; i < WINDOW_SIZE; i++) {
-			System.out.println("InstructionWindow["+i+"] = "+instructionWindow[i].toString());
+
+			System.out.format("%5s %10d %10d %10d %10d %10d %10d %10d %10d %10d",
+					"L"+i, instructionWindow[i].validLine, instructionWindow[i].op, instructionWindow[i].type, instructionWindow[i].opA, instructionWindow[i].vOpA, instructionWindow[i].opB, instructionWindow[i].vOpB, instructionWindow[i].inm, instructionWindow[i].robLine);
+			System.out.println();
 		}
+		System.out.println("----------------------------------------------------------------------------------------------------------------");
 
 	}
 
 	private static void show_ROB(ROB[] rob) {
-
-		int robPointer = firstIndexRob;
-		if (robPointer < 0) robPointer = 0;
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.println("ROB");
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.printf("%5s %10s %10s %10s %10s %10s","", "VLINE", "DEST", "RES", "VRES", "ETAPA");
+		System.out.println();
+		System.out.println("--------------------------------------------------------------------------------------------");
+		String type = "(+/-)";
 		for (int i = 0; i < ROB_LENGTH; i++) {
-			System.out.println("ROB["+i+"] = "+rob[i].toString());
-			robPointer = (robPointer + 1) % ROB_LENGTH;
+
+			System.out.format("%5s %10s %10d %10d %10d %10d",
+					"L"+i, rob[i].validLine, rob[i].destReg, rob[i].res, rob[i].vaildRes, rob[i].stage);
+			System.out.println();
 		}
+		System.out.println("--------------------------------------------------------------------------------------------");
+
+
 	}
 
 	private static void show_DataRegisters() { // TODO: Se estaba mostrando la memoria de datos en lugar del banco de registros.
 		int total = Memory.registers.length;
 		int cantidad = (total+3)/4;
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.println("REGISTROS");
+		System.out.println("--------------------------------------------------------------------------------------------");
 		for(int i=0; i<cantidad; i++) {
 			System.out.print((i>=10)? "Registro "+i+" -> "+Memory.registers[i].data:"Registro  "+i+" -> "+Memory.registers[i].data);
 			System.out.print(((i+cantidad)>=10)?"\t\tRegistro "+(i+cantidad)+" -> "+Memory.registers[(i+cantidad)].data:"\t\tRegistro  "+(i+cantidad)+" -> "+Memory.registers[(i+cantidad)].data);
@@ -420,12 +454,43 @@ public class Main {
 			if ((i+3*cantidad)<total) System.out.print(((i+3*cantidad)>=10)?"\t\tRegistro "+(i+3*cantidad)+" -> "+Memory.registers[(i+3*cantidad)].data:"\t\tRegistro  "+(i+3*cantidad)+" -> "+Memory.registers[(i+3*cantidad)].data);
 			System.out.println();
 		}
+		System.out.println("--------------------------------------------------------------------------------------------");
 	}
-	
-	private static void show_FU(FunctionalUnit[] fu) {
-		for(FunctionalUnit i : fu) {
-			System.out.println(i);
+
+	private static void show_DataMem() {
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.println("MEMORIA DATOS");
+		System.out.println("--------------------------------------------------------------------------------------------");
+		for (int i = 3; i < Memory.dataMem.length; i += 4) {
+			System.out.print("\tData["+(i-3)+"] = "+Memory.dataMem[i-3]);
+			System.out.print("\tData["+(i-2)+"] = "+Memory.dataMem[i-2]);
+			System.out.print("\tData["+(i-1)+"] = "+Memory.dataMem[i-1]);
+			System.out.print("\tData["+(i)+"] = "+Memory.dataMem[i]+"\n");
 		}
+	}
+	private static void show_FU(FunctionalUnit[] functionalUnits) {
+
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.println("UNIDADES FUNCIONALES");
+		System.out.println("--------------------------------------------------------------------------------------------");
+		System.out.printf("%10s %10s %15s %10s %10s %10s %10s %10s","TYPE", "USO", "CONT CICLOS", "LÍNEA ROB", "OPER", "RES", "OPA", "OPB");
+		System.out.println();
+		System.out.println("--------------------------------------------------------------------------------------------");
+		String type = "(+/-)";
+		for (int i = 0; i < functionalUnits.length; i++) {
+			switch (i) {
+				case 2:
+					type = "(I/S)";
+					break;
+				case 3:
+					type = "(*)";
+					break;
+			}
+			System.out.format("%10s %10d %15d %10d %10d %10d %10d %10d",
+					type, functionalUnits[i].inUse, functionalUnits[i].cycleCount, functionalUnits[i].robLine, functionalUnits[i].op, functionalUnits[i].res, functionalUnits[i].opA, functionalUnits[i].opB);
+			System.out.println();
+		}
+		System.out.println("--------------------------------------------------------------------------------------------");
 	}
 	
 }
