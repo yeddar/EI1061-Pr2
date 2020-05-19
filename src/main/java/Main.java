@@ -170,7 +170,6 @@ public class Main {
 				iw[wPointer].rset();
 
 
-
 				// Parte 1. Búsqueda operando A
 				if ( (Memory.registers[id_ra].validData == 1) ) { // Si registro tiene contenido válido
 					if((ins.getRa() == 2) && (ins.getOperationCode() == Memory.addi) && ins.getInm() == 3) {
@@ -198,7 +197,7 @@ public class Main {
 					}
 				}
 
-				//Parte 2. Búsqueda operando B i inmediato
+				//Parte 2. Búsqueda operando B e inmediato
 				// Operando B. Tener en cuenta que puede ser dato inmediato
 				if (ins.getType() == Memory.typeI) { //Type I instruction
 					iw[wPointer].inm = ins.getInm(); // TODO: Cambiado
@@ -366,7 +365,7 @@ public class Main {
 						instructionWindow[i].opA = rob[robPointer].res;
 						instructionWindow[i].vOpA = 1;
 					// Operando fuente B
-					}
+					}else
 					// TODO: Aquí estaba el error de registros iguales en misma instrucción
 					if ( (instructionWindow[i].opB == robPointer) && (instructionWindow[i].vOpB != -1) ) {
 						instructionWindow[i].opB = rob[robPointer].res;
