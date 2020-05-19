@@ -85,7 +85,7 @@ public class Main {
 
 
 			//Mostrar el contenido de las distintas estructuras para ver como evoluciona la simulación
-			System.out.println("\nCiclo numero "+i+"\n");
+			System.out.println("\nCiclo número "+i+"\n");
 			show_instructionQueue();
 			show_instructionWindow(instructionWindow);
 			show_ROB(rob);
@@ -102,7 +102,7 @@ public class Main {
 		// Check size of the queue
 		int i = 0;
 		while ( ( Memory.instructionQueue.size() < QUEUE_MAX_LENGTH ) && (i < MAX_INST) && (programCounter < maxNumOfInstructions) ) {
-			System.out.println("-----------Cola: "+Memory.instructionMem[programCounter]);
+			//System.out.println("-----------Cola: "+Memory.instructionMem[programCounter]);
 			Memory.instructionQueue.add(Memory.instructionMem[programCounter++]);
 			i++;
 
@@ -255,27 +255,20 @@ public class Main {
 				if ((iw[i].op == Memory.add) || (iw[i].op == Memory.sub) || (iw[i].op == Memory.addi) || (iw[i].op == Memory.subi)) {
 					if (iw[i].vOpA == 1 && (iw[i].vOpB == 1 || iw[i].op == Memory.addi || iw[i].op == Memory.subi) ) { // Esto sieve para mirar que las instrucciones tienen sus datos validos
 						if (functionUnits[UF_SUM1].inUse == 0) { // Esto para que, en caso de estar la FU libre, enviar la instruccion
-							inst_instructionWindow--; // TODO Prueba
+							inst_instructionWindow--;
 							if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM1].addFU();
 							else functionUnits[UF_SUM1].subFU();
-							System.out.println("Prueba en ISS inst add"+iw[i].toString());
 							functionUnits[UF_SUM1].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
-							//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
 
-							//iw[i].validLine = 0; // TODO: Cuando se borra linea de ventana hay que dejar TODOS los bits de validez a 0 y el inmediato también
-							// Lo más fácil es:
 							iw[i].rset(); // Pone toda la línea a sus valores por defecto
 							i++;
 						}
 						else
 							if (functionUnits[UF_SUM2].inUse == 0) {
-								inst_instructionWindow--; // TODO Prueba
+								inst_instructionWindow--;
 								if((iw[i].op == Memory.add) || (iw[i].op == Memory.addi)) functionUnits[UF_SUM2].addFU();
 								else functionUnits[UF_SUM2].subFU();
-								System.out.println("Prueba en ISS inst add"+iw[i].toString());
 								functionUnits[UF_SUM2].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
-								//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
-								//iw[i].validLine = 0;
 								iw[i].rset();
 								i++;
 							}
@@ -289,12 +282,10 @@ public class Main {
 					if ((iw[i].op == Memory.lw) || (iw[i].op == Memory.sw) ) {
 						if (iw[i].vOpA == 1 && (iw[i].op == Memory.lw || iw[i].vOpB == 1)) {
 							if (functionUnits[UF_CA].inUse == 0) {
-								inst_instructionWindow--; // TODO Prueba
+								inst_instructionWindow--;
 								if((iw[i].op == Memory.add) || (iw[i].op == Memory.lw)) functionUnits[UF_CA].chargeFU();
 								else functionUnits[UF_CA].storeFU();
 								functionUnits[UF_CA].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
-								//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
-								//iw[i].validLine = 0;
 								iw[i].rset();
 								i++;
 							}
@@ -306,10 +297,8 @@ public class Main {
 						if (iw[i].op == Memory.mult) {
 							if (iw[i].vOpA == 1 && iw[i].vOpB == 1) {
 								if (functionUnits[UF_MULT].inUse == 0) {
-									inst_instructionWindow--; // TODO Prueba
+									inst_instructionWindow--;
 									functionUnits[UF_MULT].init(iw[i].robLine, iw[i].opA, iw[i].opB, iw[i].inm);
-									//lastIndexRob = (lastIndexRob+1)%ROB_LENGTH;
-									//iw[i].validLine = 0;
 									iw[i].rset();
 									i++;
 								}
@@ -321,7 +310,6 @@ public class Main {
 						}
 				}
 				if (i==0) {
-					System.out.println("Aquí nunca llego!!!!");
 					seguir = false;
 				}
 
@@ -336,7 +324,7 @@ public class Main {
 		for(int i=0; i<TOTAL_UF; i++) {
 			if (functionalUnits[i].inUse == 1) {
 				if(functionalUnits[i].execute()) {
-					System.out.println("------------->"+functionalUnits[i].robLine);
+					//System.out.println("------------->"+functionalUnits[i].robLine);
 					if(functionalUnits[i].robLine<0) break;
 					rob[functionalUnits[i].robLine].res = functionalUnits[i].res;
 					rob[functionalUnits[i].robLine].stage = F0;
@@ -379,12 +367,10 @@ public class Main {
 						// Se actualiza el en la línea de la VI el resultado
 						instructionWindow[i].opA = rob[robPointer].res;
 						instructionWindow[i].vOpA = 1;
-						System.out.println("Se actualiza opA de inst = "+instructionWindow[i].toString());
 					// Operando fuente B
 					}
 					// TODO: Aquí estaba el error de registros iguales en misma instrucción
 					if ( (instructionWindow[i].opB == robPointer) && (instructionWindow[i].vOpB != -1) ) {
-						System.out.println("Se actualiza opB de inst = "+instructionWindow[i].toString());
 						instructionWindow[i].opB = rob[robPointer].res;
 						instructionWindow[i].vOpB = 1;
 
@@ -399,7 +385,7 @@ public class Main {
 	// Diego
 	private static void show_instructionQueue() {
 		System.out.println("Instruction queue:");
-		if(Memory.instructionQueue.isEmpty()) System.out.println("vacía");
+		if(Memory.instructionQueue.isEmpty()) System.out.println("Cola de instrucciones vacía");
 		for (Instruction ins : Memory.instructionQueue) {
 			if (ins != null)
 				System.out.println(ins.toString());

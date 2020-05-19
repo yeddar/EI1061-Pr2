@@ -78,29 +78,29 @@ public class FunctionalUnit {
 		if(cycleCount >= maxCycles) {
 			this.inUse = 0;
 			if (this.op == ADD_OP) {
-				System.out.println("-----Unidad de suma: opA="+opA+", opB="+opB+", inm="+inm);
+				//System.out.println("-----Unidad de suma: opA="+opA+", opB="+opB+", inm="+inm);
 				this.res = this.opA+ this.opB + this.inm;
 				return true;
 			}
 			if (this.op == SUB_OP) {
-				System.out.println("-----Unidad de resta: opA="+opA+", opB="+opB+", inm="+inm);
+				//System.out.println("-----Unidad de resta: opA="+opA+", opB="+opB+", inm="+inm);
 				this.res = this.opA - this.opB - this.inm;
 				return true;
 			}
 			if (this.op == CHARGE_OP) {
 				this.res = Memory.dataMem[this.opA + this.inm];
-				System.out.println("-----Unidad de carga: opA="+opA+", inm="+inm+", res="+res);
+				//System.out.println("-----Unidad de carga: opA="+opA+", inm="+inm+", res="+res);
 				//throw new RuntimeException();
 				return true;
 			}
 			if (this.op == STORE_OP) {
-				System.out.println("-----Unidad de almacenamiento: opA="+opA+", opB="+opB+", inm="+inm);
+				//System.out.println("-----Unidad de almacenamiento: opA="+opA+", opB="+opB+", inm="+inm);
 				Memory.dataMem[this.opA + this.inm] = this.opB;
 				//throw new RuntimeException();
 				return true;
 			}
 			if (this.op == MULT_OP) {
-				System.out.println("-----Unidad de mult: opA="+opA+", opB="+opB);
+				//System.out.println("-----Unidad de mult: opA="+opA+", opB="+opB);
 				this.res = this.opA * this.opB;
 				return true;
 			}
