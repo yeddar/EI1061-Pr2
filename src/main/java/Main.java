@@ -223,12 +223,11 @@ public class Main {
 				}
 
 				// Actualizar bit de validez banco de registros
-				//if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro
+				if (ins.getOperationCode() != Memory.sw) { // Intrucción de carga en registro // TODO: Cambiado.
 					Memory.registers[id_rc].validData = 0;
 					// Add instruction into ROB
 					iw[wPointer].robLine = addLineROB(rob, 1, id_rc, 0, 0, ID);
-
-				//}
+				}
 
 
 
